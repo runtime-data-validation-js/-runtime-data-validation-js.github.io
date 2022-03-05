@@ -1,0 +1,242 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!-- Consider adding a manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width">
+<title>Data formats for validation, and storing data</title>
+
+
+
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="pagename" content="Data formats for validation, and storing data">
+
+
+
+
+
+
+
+
+
+<meta name="date" content="2022-03-04T20:01:51.462Z">
+
+<meta name="DC.title" content="Data formats for validation, and storing data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- OpenGraph Meta Tags -->
+
+<meta name="og:title" content="Data formats for validation, and storing data">
+
+<meta name="og:url" content="https://example.akashacms.com/data-format.html">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="canonical" href="https://example.akashacms.com/data-format.html">
+
+<link rel="sitemap" type="application/xml" href="sitemap.xml" title="Sitemap">
+
+
+<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" type="text/css" href="css/flatly.min.css"><link rel="stylesheet" type="text/css" href="css/style.css"><link rel="stylesheet" type="text/css" href="vendor/fontawesome-free/css/all.min.css"><link rel="stylesheet" type="text/css" href="vendor/highlight.js/styles/tomorrow-night-blue.css">
+
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="index.html"><i class="fas fa-home"></i>Home</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    Guide <span class="caret"></span></a>
+            <div class="dropdown-menu">
+
+                <a class="dropdown-item" href="getting-started.html">Getting Started</a>
+                <a class="dropdown-item" href="data-format.html">Data Formats</a>
+                <a class="dropdown-item" href="custom-validator.html">Custom validation</a>
+            </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="api/index.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="news/index.html">News</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+<div class="container" role="main">
+<div class="row">
+<header class="col-md-12">
+<div class="row">
+<span class="col-md-8" style="text-align: center;">
+<!-- <a href="/index.html"><img src="/images/project-logo.jpg" width="150px" align="left"/></a> -->
+<h1 align="center">Data formats for validation, and storing data</h1>
+</span>
+<span class="col-md-4">
+<form method="get" id="ddgSearch" action="https://duckduckgo.com/">
+<input type="hidden" name="sites" value="https://robogeek.github.io/runtime-data-validation-typescript/">
+<input type="hidden" name="k7" value="#ffffff">
+<input type="hidden" name="k8" value="#222222">
+<input type="hidden" name="k9" value="#00278e">
+<input type="hidden" name="kx" value="#20692b">
+<input type="hidden" name="kj" value="#fafafa">
+<input type="hidden" name="kt" value="p">
+<input type="text" name="q" placeholder="Search runtime-data-validation" aria-label="Search runtime-data-validation on DuckDuckGo">
+<button type="submit">Search</button>
+</form>
+</span>
+</div>
+</header>
+</div>
+<div class="row">
+<div class="col-md-12">
+<div class="row">
+
+<section id="breadcrumb" class="col-sm-12">
+<nav aria-label="breadcrumb" id="breadcrumbTrail">
+<ol class="breadcrumb">
+ <li class="breadcrumb-item "> <a href="data-format.html">Data formats for validation, and storing data</a> </li>
+</ol>
+</nav>
+</section>
+
+
+<section id="category-tags" class="col-sm-12">
+
+    Date: Fri Mar 04 2022
+
+
+</section>
+
+</div>
+<div class="row">
+<article class="col-sm-10">
+
+<p>As of this writing, the validation decorators and validation functions primarily validate string data.  A few of the functions act on numbers, and in that case can take either <code>string</code> or <code>number</code> data.  Obviously there are many other data types we might want to validate, so let&apos;s discuss what to do.</p>
+<p>This package is based on <code>validator.js</code> which validates <code>string</code> data items.  It has a long list of validation functions, all of which validate strings.</p>
+<p>A simple example is:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Example</span> {
+    #<span class="hljs-attr">title</span>: <span class="hljs-built_in">string</span>;
+
+    <span class="hljs-meta">@ValidateAccessor</span>&lt;<span class="hljs-built_in">string</span>&gt;()
+    <span class="hljs-meta">@IsAlpha</span>(<span class="hljs-string">&apos;en-US&apos;</span>)
+    <span class="hljs-keyword">set</span> <span class="hljs-title function_">title</span>(<span class="hljs-params">ny: <span class="hljs-built_in">string</span></span>) { <span class="hljs-variable language_">this</span>.#title = ny; }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">title</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#title; }
+}
+</code></pre>
+<p>The <code>IsAlpha</code> decorator ensures that the string assigned to <code>#title</code> only contains alphabetic characters.  There are an extremely large number of data items that have a string representation, and can be stored this way.</p>
+<p>One strategy to consider is to be given a string, but to then store the data in its native format.</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ImgRef</span> {
+    #<span class="hljs-attr">src</span>: <span class="hljs-variable constant_">URL</span>;
+
+    <span class="hljs-meta">@ValidateAccessor</span>&lt;<span class="hljs-built_in">string</span>&gt;()
+    <span class="hljs-meta">@IsURL</span>()
+    <span class="hljs-keyword">set</span> <span class="hljs-title function_">src</span>(<span class="hljs-params">nurl: <span class="hljs-built_in">string</span></span>) { <span class="hljs-variable language_">this</span>.#src = <span class="hljs-keyword">new</span> <span class="hljs-title function_">URL</span>(nurl); }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">src</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>?.#src?.<span class="hljs-title function_">toString</span>(); }
+
+    <span class="hljs-title function_">url</span>(<span class="hljs-params"></span>)  { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#src; }
+    <span class="hljs-title function_">toString</span>(<span class="hljs-params"></span>) { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#src?.<span class="hljs-title function_">toString</span>(); }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">protocol</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>?.#src?.<span class="hljs-property">protocol</span>; }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">host</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>?.#src?.<span class="hljs-property">host</span>; }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">pathname</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>?.#src?.<span class="hljs-property">pathname</span>; }
+}
+</code></pre>
+<p>The example is to store a URL for an image.  The <code>set</code> accessor receives the URL as a string, but we can use <code>new URL(url)</code> to parse that to an URL object, and store it as a URL.  We can then implement other <code>get</code> accessors to retrieve fields from the URL, and a <code>toString</code> method for conversion back to string format..</p>
+<p>A similar example:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Speed</span> {
+    #<span class="hljs-attr">viteza</span>: <span class="hljs-built_in">number</span>;
+
+    <span class="hljs-meta">@ValidateAccessor</span>&lt;<span class="hljs-built_in">string</span> | <span class="hljs-built_in">number</span>&gt;()
+    <span class="hljs-meta">@IsFloatRange</span>(<span class="hljs-number">0</span>, <span class="hljs-number">99999</span>)
+    <span class="hljs-keyword">set</span> <span class="hljs-title function_">speed</span>(<span class="hljs-params">ns: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">number</span></span>) { <span class="hljs-variable language_">this</span>.#viteza = <span class="hljs-title class_">ToFloat</span>(ns); }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">speed</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#viteza; }
+
+    <span class="hljs-title function_">toString</span>(<span class="hljs-params"></span>) { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>?.#viteza?.<span class="hljs-title function_">toString</span>(); }
+}
+</code></pre>
+<p>This is the same strategy of receiving data as a <code>string</code>, and converting it to the native data format.  Notice that the type supplied to the <code>set</code> accessor and to <code>@ValidateAccessor</code> is <code>string | number</code>, so that TypeScript knows to accept either data format.</p>
+<p>The <code>@IsFloatRange</code> uses the <code>isFloat</code> function from <code>validator.js</code>, which only validates <code>string</code> data.  This means <code>@IsFloatRange</code> tests its input, and if it is a <code>number</code> it handles the validation itself rather than using <code>validator.js</code>.</p>
+
+</article>
+<section id="right" class="col-sm-2">
+</section>
+</div>
+</div>
+</div>
+<footer class="row" style="text-align: center; height: 100px;">
+
+</footer>
+</div>
+<script src="vendor/jquery/jquery.min.js"></script><script src="vendor/popper.js/umd/popper.min.js"></script><script src="vendor/bootstrap/js/bootstrap.min.js"></script><script src="vendor/highlight.js/lib/highlight.js"></script><script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>

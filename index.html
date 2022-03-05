@@ -1,0 +1,241 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!-- Consider adding a manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width">
+<title>Automatic runtime data validaton decorators for TypeScript</title>
+
+
+
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="pagename" content="Automatic runtime data validaton decorators for TypeScript">
+
+
+
+
+
+
+
+
+
+<meta name="date" content="2022-03-04T03:16:57.670Z">
+
+<meta name="DC.title" content="Automatic runtime data validaton decorators for TypeScript">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- OpenGraph Meta Tags -->
+
+<meta name="og:title" content="Automatic runtime data validaton decorators for TypeScript">
+
+<meta name="og:url" content="https://example.akashacms.com/index.html">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="canonical" href="https://example.akashacms.com/index.html">
+
+<link rel="sitemap" type="application/xml" href="sitemap.xml" title="Sitemap">
+
+
+<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" type="text/css" href="css/flatly.min.css"><link rel="stylesheet" type="text/css" href="css/style.css"><link rel="stylesheet" type="text/css" href="vendor/fontawesome-free/css/all.min.css"><link rel="stylesheet" type="text/css" href="vendor/highlight.js/styles/tomorrow-night-blue.css">
+
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="index.html"><i class="fas fa-home"></i>Home</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    Guide <span class="caret"></span></a>
+            <div class="dropdown-menu">
+
+                <a class="dropdown-item" href="getting-started.html">Getting Started</a>
+                <a class="dropdown-item" href="data-format.html">Data Formats</a>
+                <a class="dropdown-item" href="custom-validator.html">Custom validation</a>
+            </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="api/index.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="news/index.html">News</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+<div class="container" role="main">
+<div class="row">
+<header class="col-md-12">
+<div class="row">
+<span class="col-md-8" style="text-align: center;">
+<!-- <a href="/index.html"><img src="/images/project-logo.jpg" width="150px" align="left"/></a> -->
+<h1 align="center">Automatic runtime data validaton decorators for TypeScript</h1>
+</span>
+<span class="col-md-4">
+<form method="get" id="ddgSearch" action="https://duckduckgo.com/">
+<input type="hidden" name="sites" value="https://robogeek.github.io/runtime-data-validation-typescript/">
+<input type="hidden" name="k7" value="#ffffff">
+<input type="hidden" name="k8" value="#222222">
+<input type="hidden" name="k9" value="#00278e">
+<input type="hidden" name="kx" value="#20692b">
+<input type="hidden" name="kj" value="#fafafa">
+<input type="hidden" name="kt" value="p">
+<input type="text" name="q" placeholder="Search runtime-data-validation" aria-label="Search runtime-data-validation on DuckDuckGo">
+<button type="submit">Search</button>
+</form>
+</span>
+</div>
+</header>
+</div>
+<div class="row">
+<div class="col-md-12">
+<div class="row">
+
+
+</div>
+<div class="row">
+<article class="col-sm-10">
+
+<p align="center"><em>Automatically validate data in fields or methods in JavaScript/TypeScript objects.</em></p>
+<p align="center"><em>Succinctly describe data validation requirements using TypeScript decorators.</em></p>
+<p align="center"><em>Have certainty that protected properties and methods always have correctly validated values.</em></p>
+<p>This project - <a href="https://www.npmjs.com/package/runtime-data-validation"><code>runtime-data-validation</code></a> - is easily installed in a TypeScript/Node.js project, and provides seamless automatic data validation for the following:</p>
+<ul>
+<li>Properties handled by accessor functions in instances of TypeScript classes</li>
+<li>Parameters to member functions in instances of TypeScript classes</li>
+</ul>
+<p>For an example of what this means:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">import</span> {
+    <span class="hljs-title class_">ValidateAccessor</span>, <span class="hljs-title class_">ValidateParams</span>,
+    <span class="hljs-title class_">IsIntRange</span>, <span class="hljs-title class_">IsInt</span>, <span class="hljs-title class_">IsFloatRange</span>,
+    <span class="hljs-title class_">ToInt</span>, <span class="hljs-title class_">ToFloat</span>
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;runtime-data-validation&apos;</span>;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ValidateExample</span> {
+
+    #<span class="hljs-attr">year</span>: number;
+
+    @<span class="hljs-title class_">ValidateAccessor</span>&lt;number&gt;()
+    @<span class="hljs-title class_">IsIntRange</span>(<span class="hljs-number">1990</span>, <span class="hljs-number">2050</span>)
+    @<span class="hljs-title class_">IsInt</span>()
+    <span class="hljs-keyword">set</span> <span class="hljs-title function_">year</span>(<span class="hljs-params">ny: number | string</span>) { <span class="hljs-variable language_">this</span>.#year = <span class="hljs-title class_">ToInt</span>(ny); }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">year</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#year; }
+
+    @<span class="hljs-title class_">ValidateParams</span>
+    <span class="hljs-title function_">area</span>(<span class="hljs-params">
+        @IsFloatRange(<span class="hljs-number">0</span>, <span class="hljs-number">1000</span>) width: number | string,
+        @IsFloatRange(<span class="hljs-number">0</span>, <span class="hljs-number">1000</span>) height: number | string
+    </span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-title class_">ToFloat</span>(width) * <span class="hljs-title class_">ToFloat</span>(height);
+    }
+
+}
+</code></pre>
+<p>We have here:</p>
+<ul>
+<li><em>Validation decorators</em> attached to accessor <code>set</code> methods</li>
+<li><em>Validation decorators</em> attached to method parameters</li>
+<li><em>Decorators</em> attached to accessor <code>set</code> methods and regular methods</li>
+<li><em>Conversion functions</em> to aid with converting possibly <code>string</code> values to either integer or floating <code>number</code> values</li>
+</ul>
+<p>The validation decorators describe specific validation algorithms to execute. The implementation for most uses <a href="https://www.npmjs.com/package/validator">validator.js</a>, in the background.  As a result, the current validation decorators focus on validating strings.</p>
+<p>By themselves the validation decorators do not perform validation.  The rationale has to do with how decorator functions operate (to learn why, read <a href="https://javascript.plainenglish.io/deep-introduction-to-using-and-implementing-typescript-decorators-a9e876ad0d43">about using and developing TypeScript decorators</a>).  To cause the validation decorators to execute, use <code>@ValidateAccessor</code> and <code>@ValidateParams</code> as shown here.  These decorators instrument function execution for both accessors and methods.  This causes any validation decorators to execute.  Those decorator functions indicate invalid data by throwing an exception, preventing function execution.</p>
+<p>Put another way, the validation functions guarantee that when protected functions execute, their parameters are validated to be correct.</p>
+<p>This mechanism protects two kinds of things:</p>
+<ul>
+<li>Properties in TypeScript object instances - via protecting accessor functions
+<ul>
+<li>It is recommended to use the new private field syntax, as shown in the example.  This will ensure that access to property data storage is channeled through the accessor functions, which are protected by validation decorators.</li>
+</ul>
+</li>
+<li>Methods in TypeScript object instances - via protecting method parameters</li>
+</ul>
+<p>The developer is not required to explicitly call validation functions.  Instead, validation is performed on every access to the protected property or methods this pattern of decorators ensures that validation is performed on every assignment to the accessor, or to every method call.</p>
+<p>This is different from the data validation packages which require validation to be explicitly invoked.  Doesn&apos;t this raise the risk that the developer will forget to do validation on a critical code path?</p>
+<p>To install this in your package, see: <a href="getting-started.html" title="Getting started with the runtime-data-validation package">Getting started with the runtime-data-validation package</a></p>
+<p>The package includes a very long list of validation decorators.  The implementation uses <a href="https://www.npmjs.com/package/validator">validator.js</a> in the background.  Development was inspired by <a href="https://www.npmjs.com/package/class-validator">class-validator</a>.</p>
+
+</article>
+<section id="right" class="col-sm-2">
+</section>
+</div>
+</div>
+</div>
+<footer class="row" style="text-align: center; height: 100px;">
+
+</footer>
+</div>
+<script src="vendor/jquery/jquery.min.js"></script><script src="vendor/popper.js/umd/popper.min.js"></script><script src="vendor/bootstrap/js/bootstrap.min.js"></script><script src="vendor/highlight.js/lib/highlight.js"></script><script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>

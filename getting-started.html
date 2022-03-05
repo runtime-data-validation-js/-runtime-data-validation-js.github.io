@@ -1,0 +1,210 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!-- Consider adding a manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width">
+<title>Getting started with the runtime-data-validation package</title>
+
+
+
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="pagename" content="Getting started with the runtime-data-validation package">
+
+
+
+
+
+
+
+
+
+<meta name="date" content="2022-03-04T03:07:02.286Z">
+
+<meta name="DC.title" content="Getting started with the runtime-data-validation package">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- OpenGraph Meta Tags -->
+
+<meta name="og:title" content="Getting started with the runtime-data-validation package">
+
+<meta name="og:url" content="https://example.akashacms.com/getting-started.html">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="canonical" href="https://example.akashacms.com/getting-started.html">
+
+<link rel="sitemap" type="application/xml" href="sitemap.xml" title="Sitemap">
+
+
+<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" type="text/css" href="css/flatly.min.css"><link rel="stylesheet" type="text/css" href="css/style.css"><link rel="stylesheet" type="text/css" href="vendor/fontawesome-free/css/all.min.css"><link rel="stylesheet" type="text/css" href="vendor/highlight.js/styles/tomorrow-night-blue.css">
+
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="index.html"><i class="fas fa-home"></i>Home</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    Guide <span class="caret"></span></a>
+            <div class="dropdown-menu">
+
+                <a class="dropdown-item" href="getting-started.html">Getting Started</a>
+                <a class="dropdown-item" href="data-format.html">Data Formats</a>
+                <a class="dropdown-item" href="custom-validator.html">Custom validation</a>
+            </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="api/index.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="news/index.html">News</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+<div class="container" role="main">
+<div class="row">
+<header class="col-md-12">
+<div class="row">
+<span class="col-md-8" style="text-align: center;">
+<!-- <a href="/index.html"><img src="/images/project-logo.jpg" width="150px" align="left"/></a> -->
+<h1 align="center">Getting started with the runtime-data-validation package</h1>
+</span>
+<span class="col-md-4">
+<form method="get" id="ddgSearch" action="https://duckduckgo.com/">
+<input type="hidden" name="sites" value="https://robogeek.github.io/runtime-data-validation-typescript/">
+<input type="hidden" name="k7" value="#ffffff">
+<input type="hidden" name="k8" value="#222222">
+<input type="hidden" name="k9" value="#00278e">
+<input type="hidden" name="kx" value="#20692b">
+<input type="hidden" name="kj" value="#fafafa">
+<input type="hidden" name="kt" value="p">
+<input type="text" name="q" placeholder="Search runtime-data-validation" aria-label="Search runtime-data-validation on DuckDuckGo">
+<button type="submit">Search</button>
+</form>
+</span>
+</div>
+</header>
+</div>
+<div class="row">
+<div class="col-md-12">
+<div class="row">
+
+<section id="breadcrumb" class="col-sm-12">
+<nav aria-label="breadcrumb" id="breadcrumbTrail">
+<ol class="breadcrumb">
+ <li class="breadcrumb-item "> <a href="getting-started.html">Getting started with the runtime-data-validation package</a> </li>
+</ol>
+</nav>
+</section>
+
+
+<section id="category-tags" class="col-sm-12">
+
+    Date: Thu Mar 03 2022
+
+
+</section>
+
+</div>
+<div class="row">
+<article class="col-sm-10">
+
+<p>The <code>runtime-data-validation</code> package is available for TypeScript projects running on Node.js.  It requires the decorator support provided by TypeScript.  In theory it can run in the browser, but that hasn&apos;t been implemented.</p>
+<p>Installation:</p>
+<pre><code class="hljs">$ npm install runtime-<span class="hljs-class"><span class="hljs-keyword">data</span>-validation <span class="hljs-comment">--save</span></span>
+</code></pre>
+<p>To use the decorators, add this to your code:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">import</span> {
+    <span class="hljs-title class_">IsIntRange</span>, <span class="hljs-title class_">IsInt</span>, <span class="hljs-title class_">IsFloatRange</span>, <span class="hljs-title class_">IsFloat</span>,
+    ...
+    <span class="hljs-title class_">ValidateParams</span>, <span class="hljs-title class_">ValidateAccessor</span>,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;runtime-data-validation&apos;</span>;
+</code></pre>
+<p>That is, <code>import</code> any needed decorator function.  Then structure your code similarly to the example shown above.</p>
+
+</article>
+<section id="right" class="col-sm-2">
+</section>
+</div>
+</div>
+</div>
+<footer class="row" style="text-align: center; height: 100px;">
+
+</footer>
+</div>
+<script src="vendor/jquery/jquery.min.js"></script><script src="vendor/popper.js/umd/popper.min.js"></script><script src="vendor/bootstrap/js/bootstrap.min.js"></script><script src="vendor/highlight.js/lib/highlight.js"></script><script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>
