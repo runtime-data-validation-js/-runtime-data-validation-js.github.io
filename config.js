@@ -42,12 +42,12 @@ config
     })
     .addLayoutsDir('layouts')
     .addDocumentsDir('documents')
-    .addDocumentsDir({ 
+    /* .addDocumentsDir({ 
         src: 'api', dest: 'api',
         /* baseMetadata: {
             layout: 'article.html.ejs'
-        } */
-    })
+        } * /
+    }) */
     .addPartialsDir('partials');
 
 
