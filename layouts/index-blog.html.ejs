@@ -24,12 +24,17 @@
 <!-- partial file-name="site-navbar.html"></partial -->
 
 <div class="container" role="main">
-<partial file-name="header.html.ejs"></partial>
-<partial file-name="navbar.html"></partial>
+  <div class="row">
+      <div class="col-md-12">
+        <partial file-name="header.html.ejs"></partial>
+        <partial file-name="navbar.html"></partial>
+      </div>
+  </div>
+  
 
 <div class="row">
   <!-- include our document's content -->
-  <article class="col-md-9">
+  <article class="col-md-12">
 
     <!-- 
     <div class="article-heading">
@@ -56,15 +61,14 @@
 
     </div>
   </article>
-  <section id="right" class="col-md-3">
+  <!-- <section id="right" class="col-md-3">
     <partial file-name="sidebar.html"></partial>
-  </section>
+  </section> -->
 </div>
 
 <div class="row">
+  <partial file-name="page-footer.html"></partial>
 </div>
-
-<partial file-name="page-footer.html"></partial>
 </div>
 
 <!-- JavaScript at the bottom for fast page loading -->

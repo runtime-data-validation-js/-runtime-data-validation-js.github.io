@@ -22,10 +22,13 @@
 <!-- partial file-name="site-navbar.html"></partial -->
 
 <div class="container" role="main">
-<div class="row">
-<partial file-name="header.html.ejs"></partial>
-<partial file-name="navbar.html"></partial>
-</div>
+  <div class="row">
+      <div class="col-md-12">
+        <partial file-name="header.html.ejs"></partial>
+        <partial file-name="navbar.html"></partial>
+      </div>
+  </div>
+  
 
 <div class="row">
   <section id="breadcrumb" class="col-sm-12">
@@ -37,14 +40,14 @@
 </div>
 
 <div class="row">
-  <article class="col-sm-10">
+  <article class="col-sm-12">
     <% if (typeof teaser  !== "undefined") { %><p><strong><ak-teaser></ak-teaser></strong></p> <% } %>
     <%- content %>
     <blog-next-prev maxentries="5"></blog-next-prev>
   </article>
-  <section id="right" class="col-sm-2">
+  <!-- <section id="right" class="col-sm-2">
     <partial file-name="sidebar.html"></partial>
-  </section>
+  </section> -->
 </div>
 
 <footer class="row" style="text-align: center; height: 100px;">
