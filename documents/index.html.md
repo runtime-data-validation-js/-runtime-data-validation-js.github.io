@@ -7,16 +7,18 @@ hidepubldate: true
 
 
 
-<p align="center"><em>Automatically validate data in fields or methods in JavaScript/TypeScript objects.</em></p>
+<p style="font-size: 200%;" align="center"><em>Automatically validate data in fields or methods in JavaScript/TypeScript objects, at runtime.</em></p>
 
-<p align="center"><em>Succinctly describe data validation requirements using TypeScript decorators.</em></p>
+<p style="font-size: 200%;" align="center"><em>Succinctly describe data validation requirements using TypeScript decorators.</em></p>
 
-<p align="center"><em>Have certainty that protected properties and methods always have correctly validated values.</em></p>
+<p style="font-size: 200%;" align="center"><em>Have certainty that protected properties and methods always have correctly validated values.</em></p>
 
 This project - [`runtime-data-validation`](https://www.npmjs.com/package/runtime-data-validation) - is easily installed in a TypeScript/Node.js project, and provides seamless automatic data validation for the following:
 
 * Properties handled by accessor functions in instances of TypeScript classes
 * Parameters to member functions in instances of TypeScript classes
+
+Values assigned through an accessor, or passed as a method parameter, are checked against validation requirements, and an exception is thrown if the data does not validate.  Throwing the exception prevents the assignment from being made, or prevents the method from being invoked.
 
 For an example of what this means:
 
@@ -24,8 +26,10 @@ For an example of what this means:
 import {
     ValidateAccessor, ValidateParams,
     IsIntRange, IsInt, IsFloatRange,
-    ToInt, ToFloat
+    conversions
 } from 'runtime-data-validation';
+
+const { ToFloat, ToInt } = conversions;
 
 class ValidateExample {
 
@@ -54,6 +58,31 @@ We have here:
 * _Validation decorators_ attached to method parameters
 * _Decorators_ attached to accessor `set` methods and regular methods
 * _Conversion functions_ to aid with converting possibly `string` values to either integer or floating `number` values
+
+If we attach to the script something like this:
+
+```ts
+const ve = new ValidateExample();
+
+ve.year = 1999;
+console.log({
+    year: ve.year,
+    area: ve.area(10, 200)
+})
+
+// Error: Value 2150 not an integer between 1990 and 2050
+ve.year = 2150;
+
+console.log(ve.area('10', '200'));
+
+// Error: Value 'two hundred' not a float between 0 and 1000
+console.log(ve.area('10', 'two hundred'));
+```
+
+Two of those statements throw the errors shown here.  The first assigns a value to the `year` property that's outside the declared range.  The next statement invokes the `area` method, with numerical values represented as strings.  The `IsFloatRange` decorator validates the strings correctly, and the `ToFloat` function converts that to a `number` so that the result of the multiplication is a number.  However, the invocation after that has a string that is decidedly not numerical.
+
+In short, assignments to object properties, or method calls, can be automatically validated and protected from incorrect data.
+
 
 The validation decorators describe specific validation algorithms to execute. The implementation for most uses [validator.js](https://www.npmjs.com/package/validator), in the background.  As a result, the current validation decorators focus on validating strings.
 
