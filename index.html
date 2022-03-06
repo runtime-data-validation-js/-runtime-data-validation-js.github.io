@@ -40,7 +40,7 @@
 
 
 
-<meta name="date" content="2022-03-05T19:57:04.848Z">
+<meta name="date" content="2022-03-06T04:50:08.664Z">
 
 <meta name="DC.title" content="Automatic runtime data validaton decorators for TypeScript">
 
@@ -169,20 +169,23 @@
 <div class="row">
 <article class="col-sm-12">
 
-<p align="center"><em>Automatically validate data in fields or methods in JavaScript/TypeScript objects.</em></p>
-<p align="center"><em>Succinctly describe data validation requirements using TypeScript decorators.</em></p>
-<p align="center"><em>Have certainty that protected properties and methods always have correctly validated values.</em></p>
+<p style="font-size: 200%;" align="center"><em>Automatically validate data in fields or methods in JavaScript/TypeScript objects, at runtime.</em></p>
+<p style="font-size: 200%;" align="center"><em>Succinctly describe data validation requirements using TypeScript decorators.</em></p>
+<p style="font-size: 200%;" align="center"><em>Have certainty that protected properties and methods always have correctly validated values.</em></p>
 <p>This project - <a href="https://www.npmjs.com/package/runtime-data-validation"><code>runtime-data-validation</code></a> - is easily installed in a TypeScript/Node.js project, and provides seamless automatic data validation for the following:</p>
 <ul>
 <li>Properties handled by accessor functions in instances of TypeScript classes</li>
 <li>Parameters to member functions in instances of TypeScript classes</li>
 </ul>
+<p>Values assigned through an accessor, or passed as a method parameter, are checked against validation requirements, and an exception is thrown if the data does not validate.  Throwing the exception prevents the assignment from being made, or prevents the method from being invoked.</p>
 <p>For an example of what this means:</p>
 <pre><code class="hljs language-js"><span class="hljs-keyword">import</span> {
     <span class="hljs-title class_">ValidateAccessor</span>, <span class="hljs-title class_">ValidateParams</span>,
     <span class="hljs-title class_">IsIntRange</span>, <span class="hljs-title class_">IsInt</span>, <span class="hljs-title class_">IsFloatRange</span>,
-    <span class="hljs-title class_">ToInt</span>, <span class="hljs-title class_">ToFloat</span>
+    conversions
 } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;runtime-data-validation&apos;</span>;
+
+<span class="hljs-keyword">const</span> { <span class="hljs-title class_">ToFloat</span>, <span class="hljs-title class_">ToInt</span> } = conversions;
 
 <span class="hljs-keyword">class</span> <span class="hljs-title class_">ValidateExample</span> {
 
@@ -211,6 +214,25 @@
 <li><em>Decorators</em> attached to accessor <code>set</code> methods and regular methods</li>
 <li><em>Conversion functions</em> to aid with converting possibly <code>string</code> values to either integer or floating <code>number</code> values</li>
 </ul>
+<p>If we attach to the script something like this:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">const</span> ve = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ValidateExample</span>();
+
+ve.<span class="hljs-property">year</span> = <span class="hljs-number">1999</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>({
+    <span class="hljs-attr">year</span>: ve.<span class="hljs-property">year</span>,
+    <span class="hljs-attr">area</span>: ve.<span class="hljs-title function_">area</span>(<span class="hljs-number">10</span>, <span class="hljs-number">200</span>)
+})
+
+<span class="hljs-comment">// Error: Value 2150 not an integer between 1990 and 2050</span>
+ve.<span class="hljs-property">year</span> = <span class="hljs-number">2150</span>;
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ve.<span class="hljs-title function_">area</span>(<span class="hljs-string">&apos;10&apos;</span>, <span class="hljs-string">&apos;200&apos;</span>));
+
+<span class="hljs-comment">// Error: Value &apos;two hundred&apos; not a float between 0 and 1000</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ve.<span class="hljs-title function_">area</span>(<span class="hljs-string">&apos;10&apos;</span>, <span class="hljs-string">&apos;two hundred&apos;</span>));
+</code></pre>
+<p>Two of those statements throw the errors shown here.  The first assigns a value to the <code>year</code> property that&apos;s outside the declared range.  The next statement invokes the <code>area</code> method, with numerical values represented as strings.  The <code>IsFloatRange</code> decorator validates the strings correctly, and the <code>ToFloat</code> function converts that to a <code>number</code> so that the result of the multiplication is a number.  However, the invocation after that has a string that is decidedly not numerical.</p>
+<p>In short, assignments to object properties, or method calls, can be automatically validated and protected from incorrect data.</p>
 <p>The validation decorators describe specific validation algorithms to execute. The implementation for most uses <a href="https://www.npmjs.com/package/validator">validator.js</a>, in the background.  As a result, the current validation decorators focus on validating strings.</p>
 <p>By themselves the validation decorators do not perform validation.  The rationale has to do with how decorator functions operate (to learn why, read <a href="https://javascript.plainenglish.io/deep-introduction-to-using-and-implementing-typescript-decorators-a9e876ad0d43">about using and developing TypeScript decorators</a>).  To cause the validation decorators to execute, use <code>@ValidateAccessor</code> and <code>@ValidateParams</code> as shown here.  These decorators instrument function execution for both accessors and methods.  This causes any validation decorators to execute.  Those decorator functions indicate invalid data by throwing an exception, preventing function execution.</p>
 <p>Put another way, the validation functions guarantee that when protected functions execute, their parameters are validated to be correct.</p>

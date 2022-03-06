@@ -40,7 +40,7 @@
 
 
 
-<meta name="date" content="2022-03-05T19:57:04.848Z">
+<meta name="date" content="2022-03-06T04:50:08.664Z">
 
 <meta name="DC.title" content="Getting started with the runtime-data-validation package">
 
@@ -188,6 +188,17 @@
 <p>Installation:</p>
 <pre><code class="hljs">$ npm install runtime-<span class="hljs-class"><span class="hljs-keyword">data</span>-validation <span class="hljs-comment">--save</span></span>
 </code></pre>
+<p>To turn on decorator support, in <code>tsconfig.json</code> add this:</p>
+<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;compilerOptions&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        ...
+        <span class="hljs-attr">&quot;experimentalDecorators&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;emitDecoratorMetadata&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+        ...
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p>For use on Node.js, it&apos;s also useful to use <code>es2021</code> and <code>esnext</code> in the <code>lib</code> setting, <code>es2021</code> as the <code>target</code>.  These two settings here turn on experimental decorator support, and enable necessary metadata support.</p>
 <p>To use the decorators, add this to your code:</p>
 <pre><code class="hljs language-js"><span class="hljs-keyword">import</span> {
     <span class="hljs-title class_">IsIntRange</span>, <span class="hljs-title class_">IsInt</span>, <span class="hljs-title class_">IsFloatRange</span>, <span class="hljs-title class_">IsFloat</span>,
@@ -195,7 +206,7 @@
     <span class="hljs-title class_">ValidateParams</span>, <span class="hljs-title class_">ValidateAccessor</span>,
 } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;runtime-data-validation&apos;</span>;
 </code></pre>
-<p>That is, <code>import</code> any needed decorator function.  Then structure your code similarly to the example shown above.</p>
+<p>That is, <code>import</code> any needed decorator function.</p>
 
 </article>
 <!-- <section id="right" class="col-sm-2">

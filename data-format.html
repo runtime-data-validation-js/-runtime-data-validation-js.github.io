@@ -40,7 +40,7 @@
 
 
 
-<meta name="date" content="2022-03-05T19:57:04.848Z">
+<meta name="date" content="2022-03-06T04:50:08.664Z">
 
 <meta name="DC.title" content="Data formats for validation, and storing data">
 
@@ -187,7 +187,12 @@
 <p>As of this writing, the validation decorators and validation functions primarily validate string data.  A few of the functions act on numbers, and in that case can take either <code>string</code> or <code>number</code> data.  Obviously there are many other data types we might want to validate, so let&apos;s discuss what to do.</p>
 <p>This package is based on <code>validator.js</code> which validates <code>string</code> data items.  It has a long list of validation functions, all of which validate strings.</p>
 <p>A simple example is:</p>
-<pre><code class="hljs language-ts"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Example</span> {
+<pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> {
+    <span class="hljs-title class_">ValidateAccessor</span>, <span class="hljs-title class_">ValidateParams</span>,
+    <span class="hljs-title class_">IsAlpha</span>
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;runtime-data-validation&apos;</span>;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Example</span> {
     #<span class="hljs-attr">title</span>: <span class="hljs-built_in">string</span>;
 
     <span class="hljs-meta">@ValidateAccessor</span>&lt;<span class="hljs-built_in">string</span>&gt;()
@@ -196,24 +201,66 @@
     <span class="hljs-keyword">get</span> <span class="hljs-title function_">title</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#title; }
 }
 </code></pre>
-<p>The <code>IsAlpha</code> decorator ensures that the string assigned to <code>#title</code> only contains alphabetic characters.  There are an extremely large number of data items that have a string representation, and can be stored this way.</p>
-<p>One strategy to consider is to be given a string, but to then store the data in its native format.</p>
-<pre><code class="hljs language-ts"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ImgRef</span> {
+<p>The <code>IsAlpha</code> decorator ensures that the string assigned to <code>#title</code> only contains alphabetic characters.  This particular example says that not only can the text only contain alphabetic characters, but from the US English locale.</p>
+<p>To see that in action:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">const</span> ee = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Example</span>();
+
+ee.<span class="hljs-property">title</span> = <span class="hljs-string">&apos;AManForAllSeasons&apos;</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ee.<span class="hljs-property">title</span>);
+
+<span class="hljs-comment">// Error: Value &apos;A Man For All Seasons&apos; is not alpha en-US</span>
+ee.<span class="hljs-property">title</span> = <span class="hljs-string">&apos;A Man For All Seasons&apos;</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ee.<span class="hljs-property">title</span>);
+
+<span class="hljs-comment">// Error: Value &apos;diplomatic&#x103;&#xEE;ntrsurpriz&#x103;&apos; is not alpha en-US</span>
+ee.<span class="hljs-property">title</span> = <span class="hljs-string">&apos;diplomatic&#x103;&#xEE;ntrsurpriz&#x103;&apos;</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ee.<span class="hljs-property">title</span>);
+</code></pre>
+<p>The first assignment solely uses alphabetic characters, and works great.  The second has non-alphabetic characters, the spaces, and fails with the error message.  The third has some Romanian text, and also fails the validation.</p>
+<p>In this case the data is assigned to the <code>set</code> function as a <code>string</code>, it arrives as a <code>string</code> to the accessor function, and is stored as a <code>string</code> in the <code>#title</code> property.</p>
+<h1>Validating as a string, then converting to another type</h1>
+<p>In many cases we can receive data as a <code>string</code> but want to store it as its innate data format.</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> {
+    <span class="hljs-title class_">ValidateAccessor</span>, <span class="hljs-title class_">ValidateParams</span>,
+    <span class="hljs-title class_">IsURL</span>,
+    <span class="hljs-title class_">IsFQDN</span>
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;runtime-data-validation&apos;</span>;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ImgRef</span> {
     #<span class="hljs-attr">src</span>: <span class="hljs-variable constant_">URL</span>;
 
     <span class="hljs-meta">@ValidateAccessor</span>&lt;<span class="hljs-built_in">string</span>&gt;()
     <span class="hljs-meta">@IsURL</span>()
     <span class="hljs-keyword">set</span> <span class="hljs-title function_">src</span>(<span class="hljs-params">nurl: <span class="hljs-built_in">string</span></span>) { <span class="hljs-variable language_">this</span>.#src = <span class="hljs-keyword">new</span> <span class="hljs-title function_">URL</span>(nurl); }
-    <span class="hljs-keyword">get</span> <span class="hljs-title function_">src</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>?.#src?.<span class="hljs-title function_">toString</span>(); }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">src</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#src?.<span class="hljs-title function_">toString</span>(); }
 
     <span class="hljs-title function_">url</span>(<span class="hljs-params"></span>)  { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#src; }
     <span class="hljs-title function_">toString</span>(<span class="hljs-params"></span>) { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#src?.<span class="hljs-title function_">toString</span>(); }
-    <span class="hljs-keyword">get</span> <span class="hljs-title function_">protocol</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>?.#src?.<span class="hljs-property">protocol</span>; }
-    <span class="hljs-keyword">get</span> <span class="hljs-title function_">host</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>?.#src?.<span class="hljs-property">host</span>; }
-    <span class="hljs-keyword">get</span> <span class="hljs-title function_">pathname</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>?.#src?.<span class="hljs-property">pathname</span>; }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">protocol</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#src?.<span class="hljs-property">protocol</span>; }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">pathname</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#src?.<span class="hljs-property">pathname</span>; }
+
+    <span class="hljs-meta">@ValidateAccessor</span>&lt;<span class="hljs-built_in">string</span>&gt;()
+    <span class="hljs-meta">@IsFQDN</span>()
+    <span class="hljs-keyword">set</span> <span class="hljs-title function_">host</span>(<span class="hljs-params">nh: <span class="hljs-built_in">string</span></span>) { <span class="hljs-variable language_">this</span>.#src.<span class="hljs-property">host</span> = nh; }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">host</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#src?.<span class="hljs-property">host</span>; }
 }
 </code></pre>
-<p>The example is to store a URL for an image.  The <code>set</code> accessor receives the URL as a string, but we can use <code>new URL(url)</code> to parse that to an URL object, and store it as a URL.  We can then implement other <code>get</code> accessors to retrieve fields from the URL, and a <code>toString</code> method for conversion back to string format..</p>
+<p>The example is to store a URL for an image.  The <code>set</code> accessor receives the URL as a string, but we can use <code>new URL(url)</code> to parse that to an URL object, and store it as a URL.  We can then implement other <code>get</code> accessors to retrieve fields from the URL, and a <code>toString</code> method for conversion back to string format.  There is a second <code>set</code> accessor which lets us change the <code>host</code> field of the URL.  That accessor is protected by <code>@IsFQDN</code> which ensures that the string is a fully qualified domain name.</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">const</span> ir = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ImgRef</span>();
+
+ir.<span class="hljs-property">src</span> = <span class="hljs-string">&apos;https://example.com/logo.jpg&apos;</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ir.<span class="hljs-title function_">toString</span>());
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ir.<span class="hljs-title function_">url</span>());
+
+ir.<span class="hljs-property">host</span> = <span class="hljs-string">&apos;foo.bar&apos;</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ir.<span class="hljs-title function_">toString</span>());
+
+<span class="hljs-comment">// Error: Value &apos;diplomatic&#x103;&#xEE;ntrsurpriz&#x103;&apos; is not a fully qualified domain name</span>
+ir.<span class="hljs-property">host</span> = <span class="hljs-string">&apos;diplomatic&#x103;&#xEE;ntrsurpriz&#x103;&apos;</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ir.<span class="hljs-title function_">toString</span>());
+</code></pre>
+<p>The first few lines of the test execute as expected.  Since the <code>url</code> function returns the URL in its native format, the output in that case is the object structure.  The host portion of the URL changes from <code>https://example.com/logo.jpg</code> to <code>https://foo.bar/logo.jpg</code>, which is just what we&apos;d expect.</p>
+<p>Since the last portion does not use a domain name, the error shown here is thrown.</p>
 <p>A similar example:</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Speed</span> {
     #<span class="hljs-attr">viteza</span>: <span class="hljs-built_in">number</span>;
@@ -223,7 +270,7 @@
     <span class="hljs-keyword">set</span> <span class="hljs-title function_">speed</span>(<span class="hljs-params">ns: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">number</span></span>) { <span class="hljs-variable language_">this</span>.#viteza = <span class="hljs-title class_">ToFloat</span>(ns); }
     <span class="hljs-keyword">get</span> <span class="hljs-title function_">speed</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#viteza; }
 
-    <span class="hljs-title function_">toString</span>(<span class="hljs-params"></span>) { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>?.#viteza?.<span class="hljs-title function_">toString</span>(); }
+    <span class="hljs-title function_">toString</span>(<span class="hljs-params"></span>) { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#viteza?.<span class="hljs-title function_">toString</span>(); }
 }
 </code></pre>
 <p>This is the same strategy of receiving data as a <code>string</code>, and converting it to the native data format.  Notice that the type supplied to the <code>set</code> accessor and to <code>@ValidateAccessor</code> is <code>string | number</code>, so that TypeScript knows to accept either data format.</p>
