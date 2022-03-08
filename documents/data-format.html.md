@@ -1,13 +1,11 @@
 ---
 layout: article.html.ejs
-title: Data formats for validation, and storing data
+title: Data formats for data validation decorators, and storing data
 ---
 
-As of this writing, the validation decorators and validation functions primarily validate string data.  A few of the functions act on numbers, and in that case can take either `string` or `number` data.  Additionally, the package makes it easy to create custom validation decorators for custom data types.  Obviously there is a very long list of data types we might want to validate, so let's discuss what to do.
+As of this writing, the validation decorators and validation functions primarily validate string data.  This is because the package is based on `validator.js` which validates `string` data items.  A few of the functions act on numbers, and in that case can take either `string` or `number` data.  Additionally, the package makes it easy to create custom validation decorators for custom data types.  Obviously there is a very long list of data types we might want to validate, so let's discuss what to do.
 
-This package is based on `validator.js` which validates `string` data items.  It has a long list of validation functions, all of which validate strings.
-
-A simple example is:
+A simple example of validating `string` data is:
 
 ```ts
 import {
@@ -26,6 +24,8 @@ class Example {
 ```
 
 The `IsAlpha` decorator ensures that the string assigned to `#title` only contains alphabetic characters.  This particular example additionally says that the text must be in the US English locale.
+
+This pattern, using a private property (`#title`), ensures the only ability to modify that property is via the `set` accessor.  By attaching validation decorators to this function, we are certain that this property is protected from holding invalid data.
 
 To see that in action:
 
@@ -50,13 +50,12 @@ In this case the data is assigned to the `set` function as a `string`, it arrive
 
 # Validating as a string, then converting to another type
 
-In many cases we can receive data as a `string` but want to store it as its innate data format.
+In many cases we can receive data as a `string` but want to store it as its innate data format.  For instance, a URL has a common `string` representation, but it is really a data structure.  In JavaScript that is the URL object.  Let's create a class that holds URL objects, providing a few methods to manipulate the URL.
 
 ```ts
 import {
     ValidateAccessor, ValidateParams,
-    IsURL,
-    IsFQDN
+    IsURL, IsFQDN
 } from 'runtime-data-validation';
 
 class ImgRef {
@@ -79,7 +78,7 @@ class ImgRef {
 }
 ```
 
-The example is to store a URL for an image.  The `set` accessor receives the URL as a string, but we can use `new URL(url)` to parse that to an URL object, and store it as a URL.  We can then implement other `get` accessors to retrieve fields from the URL, and a `toString` method for conversion back to string format.  There is a second `set` accessor which lets us change the `host` field of the URL.  That accessor is protected by `@IsFQDN` which ensures that the string is a fully qualified domain name.
+The example is to store a URL for an image.  The `set` accessor receives the URL as a `string` which is validated using `@IsURL`.  But, we use `new URL(url)` to parse that to an URL object, and store it as a URL.  We can then implement other `get` accessors to retrieve fields from the URL, and a `toString` method for conversion back to string format.  There is a second `set` accessor which lets us change the `host` field of the URL.  That accessor is protected by `@IsFQDN` which ensures that the string is a fully qualified domain name.
 
 ```ts
 const ir = new ImgRef();
@@ -91,14 +90,20 @@ console.log(ir.url());
 ir.host = 'foo.bar';
 console.log(ir.toString());
 
+// https://xn--diplomatic-qgb.ro/logo.jpg
+ir.host = 'diplomatică.ro';
+console.log(ir.toString());
+
 // Error: Value 'diplomaticăîntrsurpriză' is not a fully qualified domain name
 ir.host = 'diplomaticăîntrsurpriză';
 console.log(ir.toString());
 ```
 
-The first few lines of the test execute as expected.  Since the `url` function returns the URL object, the output in will be the object structure.  Upon assigning a value to `ir.host`, setting the `host` field of the URL, the URL changes from `https://example.com/logo.jpg` to `https://foo.bar/logo.jpg`, which is exactly what's' expected.
+The first few lines of the test execute as expected.  Since the `url` function returns the URL object, the output in will be the object structure.  Upon assigning a value to `ir.host`, setting the `host` field of the URL, the URL changes from `https://example.com/logo.jpg` to `https://foo.bar/logo.jpg`, which is exactly what's expected.
 
-The last portion does not use a domain name.  Therefore, the error shown here is thrown.
+Using some Romanian text along with the `.ro` top-level-domain (TLD) executes correctly, but the domain name is transliterated.
+
+The last test does not use a domain name, but a simple string.  Therefore, the error shown here is thrown.
 
 A similar example:
 
@@ -156,6 +161,15 @@ In the second pair we assign invalid data.  That causes an appropriate error to 
 
 # Validation of non-string data
 
-The last example showed that some of the decorators handle validation of both `number` and `string` values, while most of them solely validate `string` values.  But, obviously, there are a zillion and one different data types to validate.
+The last example showed that some of the decorators handle validation of both `number` and `string` values, while most of them solely validate `string` values.
 
-This project is welcome to receive new validation code.  Additionally, it provides a function making it easy to create new validation decorators.  See: [](custom-validator.html)
+Generalized, the pattern is to
+
+* Receive and validate data as a `string`, or in some cases as a `number`
+* If appropriate, convert to another object type by parsing the string
+
+But, obviously, there are a zillion and one different data types to validate.  Sometimes we want to validate data in its native data type, rather than validating the string representation.
+
+This project is welcome to receive new validator functions.  
+
+Additionally, it provides a function making it easy to create new validation decorators.  See: [](custom-validator.html)

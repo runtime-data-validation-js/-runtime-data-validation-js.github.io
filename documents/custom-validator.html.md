@@ -1,19 +1,20 @@
 ---
 layout: article.html.ejs
-title: Developing custom validator decorators
+title: Developing custom data validation decorators for TypeScript
 ---
 
-Implementing a custom validation decorator is simple by using the `generateValidationDecorator` function.  This function assists with generating decorator functions that store necessary data in reflection metadata.  This function is used in all validation decorators exported by the `runtime-data-validation` package.
+Implementing a custom validation decorator is simple by using the `generateValidationDecorator` function.  This function handles storing the metadata required so that `@ValidateParams` and `@ValidateAccessor` know what validations to execute.  This function is used in all validation decorators exported by the `runtime-data-validation` package.
 
 The following code comes from the test suite, `test/src/custom.ts` in the repository.
 
 ```ts
 import {
-    ValidateParams, ValidateAccessor, generateValidationDecorator
+    ValidateParams, ValidateAccessor, generateValidationDecorator,
+    validators
 } from 'runtime-data-validation';
 ```
 
-Import a few functions from the package, including `generateValidationDecorator`.
+Import a few functions from the package, including `generateValidationDecorator`.  The `validators` field contains simple validation functions which return `true` or `false`.
 
 ```ts
 type CustomType = {
@@ -48,13 +49,29 @@ const isCustomType = (value: any): boolean => {
     if (typeof value !== 'object') {
         return false;
     }
+    // Both of these fields are required in
+    // the type definition
     if (typeof value?.flag1 !== 'boolean'
      || typeof value?.speed !== 'number') {
         return false;
     }
+    // Speed must be a positive number
+    if (value.speed < 0) {
+        return false;
+    }
+    // This field is optional, and therefore can
+    // be undefined.
     if (typeof value?.title !== 'undefined'
      && typeof value?.title !== 'string') {
         return false;
+    }
+    // Be certain that `title` is correct
+    if (typeof value?.title !== 'undefined'
+     && typeof value?.title === 'string') {
+        if (!validators.isAscii(value.title)
+         || !validators.matches(value.title, /^[a-zA-Z0-9 ]+$/)) {
+            return false;
+        }
     }
     return true;
 };
@@ -66,7 +83,7 @@ function IsCustom() {
 }
 ```
 
-Each TypeScript decorator is implemented by a function.  For a complete introduction see [_How to Use and Implement TypeScript Decorators_](https://javascript.plainenglish.io/deep-introduction-to-using-and-implementing-typescript-decorators-a9e876ad0d43)
+Each TypeScript decorator is implemented by a function.  That means the `IsCustom` function can be used as a decorator as `@IsCustom()`.  For a complete introduction see [_How to Use and Implement TypeScript Decorators_](https://javascript.plainenglish.io/deep-introduction-to-using-and-implementing-typescript-decorators-a9e876ad0d43)
 
 This decorator function follows the decorator factory pattern.  The `IsCustom` function itself is not a decorator function.  Instead the decorator function is returned by `generateValidationDecorator`.
 
@@ -75,7 +92,9 @@ This function takes two parameters:
 * The validation function - these return `false` if the item fails validation, and `true` if it is valid
 * A message to use in the thrown exception if validation fails.  The marker `:value:` will receive the text resulting from calling `util.inspect(value)`.
 
-In this case, `isCustomType` can serve as a _Type Guard_ function separately from being used in the validation decorator.  Type guards is a pattern recommended by the TypeScript team to create functions like this which inspect objects and determine if the object matches a desired shape.  The `isCustomType` function is then used as the validation function.
+In this case, `isCustomType` can serve as a _Type Guard_ function separately from being used in the validation decorator.  Type guards are a pattern recommended by the TypeScript team to create functions like this which inspect objects and determine if the object matches a desired shape.  The `isCustomType` function is then used as the validation function.
+
+In `isCustomType` we demostrate using the validation functions in `validators` for custom validation.  Because `CustomType` is not a class, we cannot attach decorators to its properties.  But, `validators.isAscii` and `validators.matches` the implementation behind the `@IsAscii` and `@matches` decorators.  That makes these functions equivalent to using the corresponding decorators.
 
 The following tests produce either success or failure:
 
