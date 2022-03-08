@@ -9,7 +9,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width">
-<title>Data formats for validation, and storing data</title>
+<title>Data formats for data validation decorators, and storing data</title>
 
 
 
@@ -30,7 +30,7 @@
 
 
 
-<meta name="pagename" content="Data formats for validation, and storing data">
+<meta name="pagename" content="Data formats for data validation decorators, and storing data">
 
 
 
@@ -40,9 +40,9 @@
 
 
 
-<meta name="date" content="2022-03-08T00:50:10.858Z">
+<meta name="date" content="2022-03-08T22:20:08.792Z">
 
-<meta name="DC.title" content="Data formats for validation, and storing data">
+<meta name="DC.title" content="Data formats for data validation decorators, and storing data">
 
 
 
@@ -59,7 +59,7 @@
 
 <!-- OpenGraph Meta Tags -->
 
-<meta name="og:title" content="Data formats for validation, and storing data">
+<meta name="og:title" content="Data formats for data validation decorators, and storing data">
 
 <meta name="og:url" content="https://example.akashacms.com/data-format.html">
 
@@ -112,7 +112,7 @@
 <div class="row">
 <span class="col-md-12" style="text-align: center;">
 <!-- <a href="/index.html"><img src="/images/project-logo.jpg" width="150px" align="left"/></a> -->
-<h1 align="center">Data formats for validation, and storing data</h1>
+<h1 align="center">Data formats for data validation decorators, and storing data</h1>
 </span>
 </div>
 </header>
@@ -123,12 +123,9 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-          <a class="nav-link" href="index.html"><i class="fas fa-home"></i>Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="index.html"><i class="fas fa-home"></i>Home</a>
+        </li>
         <li class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     Guide <span class="caret"></span></a>
@@ -167,7 +164,7 @@
 <section id="breadcrumb" class="col-sm-12">
 <nav aria-label="breadcrumb" id="breadcrumbTrail">
 <ol class="breadcrumb">
- <li class="breadcrumb-item "> <a href="data-format.html">Data formats for validation, and storing data</a> </li>
+ <li class="breadcrumb-item "> <a href="data-format.html">Data formats for data validation decorators, and storing data</a> </li>
 </ol>
 </nav>
 </section>
@@ -175,7 +172,7 @@
 
 <section id="category-tags" class="col-sm-12">
 
-    Date: Mon Mar 07 2022
+    Date: Tue Mar 08 2022
 
 
 </section>
@@ -184,9 +181,8 @@
 <div class="row">
 <article class="col-sm-12">
 
-<p>As of this writing, the validation decorators and validation functions primarily validate string data.  A few of the functions act on numbers, and in that case can take either <code>string</code> or <code>number</code> data.  Additionally, the package makes it easy to create custom validation decorators for custom data types.  Obviously there is a very long list of data types we might want to validate, so let&apos;s discuss what to do.</p>
-<p>This package is based on <code>validator.js</code> which validates <code>string</code> data items.  It has a long list of validation functions, all of which validate strings.</p>
-<p>A simple example is:</p>
+<p>As of this writing, the validation decorators and validation functions primarily validate string data.  This is because the package is based on <code>validator.js</code> which validates <code>string</code> data items.  A few of the functions act on numbers, and in that case can take either <code>string</code> or <code>number</code> data.  Additionally, the package makes it easy to create custom validation decorators for custom data types.  Obviously there is a very long list of data types we might want to validate, so let&apos;s discuss what to do.</p>
+<p>A simple example of validating <code>string</code> data is:</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> {
     <span class="hljs-title class_">ValidateAccessor</span>, <span class="hljs-title class_">ValidateParams</span>,
     <span class="hljs-title class_">IsAlpha</span>
@@ -202,6 +198,7 @@
 }
 </code></pre>
 <p>The <code>IsAlpha</code> decorator ensures that the string assigned to <code>#title</code> only contains alphabetic characters.  This particular example additionally says that the text must be in the US English locale.</p>
+<p>This pattern, using a private property (<code>#title</code>), ensures the only ability to modify that property is via the <code>set</code> accessor.  By attaching validation decorators to this function, we are certain that this property is protected from holding invalid data.</p>
 <p>To see that in action:</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">const</span> ee = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Example</span>();
 
@@ -219,11 +216,10 @@ ee.<span class="hljs-property">title</span> = <span class="hljs-string">&apos;di
 <p>The first assignment solely uses alphabetic characters, and works great.  The second has non-alphabetic characters, the spaces, and fails with the error message.  The third has some Romanian text, using characters outside of the US-ASCII character set, which also fails the validation.</p>
 <p>In this case the data is assigned to the <code>set</code> function as a <code>string</code>, it arrives as a <code>string</code> to the accessor function, and is stored as a <code>string</code> in the <code>#title</code> property.</p>
 <h1>Validating as a string, then converting to another type</h1>
-<p>In many cases we can receive data as a <code>string</code> but want to store it as its innate data format.</p>
+<p>In many cases we can receive data as a <code>string</code> but want to store it as its innate data format.  For instance, a URL has a common <code>string</code> representation, but it is really a data structure.  In JavaScript that is the URL object.  Let&apos;s create a class that holds URL objects, providing a few methods to manipulate the URL.</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> {
     <span class="hljs-title class_">ValidateAccessor</span>, <span class="hljs-title class_">ValidateParams</span>,
-    <span class="hljs-title class_">IsURL</span>,
-    <span class="hljs-title class_">IsFQDN</span>
+    <span class="hljs-title class_">IsURL</span>, <span class="hljs-title class_">IsFQDN</span>
 } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;runtime-data-validation&apos;</span>;
 
 <span class="hljs-keyword">class</span> <span class="hljs-title class_">ImgRef</span> {
@@ -245,7 +241,7 @@ ee.<span class="hljs-property">title</span> = <span class="hljs-string">&apos;di
     <span class="hljs-keyword">get</span> <span class="hljs-title function_">host</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#src?.<span class="hljs-property">host</span>; }
 }
 </code></pre>
-<p>The example is to store a URL for an image.  The <code>set</code> accessor receives the URL as a string, but we can use <code>new URL(url)</code> to parse that to an URL object, and store it as a URL.  We can then implement other <code>get</code> accessors to retrieve fields from the URL, and a <code>toString</code> method for conversion back to string format.  There is a second <code>set</code> accessor which lets us change the <code>host</code> field of the URL.  That accessor is protected by <code>@IsFQDN</code> which ensures that the string is a fully qualified domain name.</p>
+<p>The example is to store a URL for an image.  The <code>set</code> accessor receives the URL as a <code>string</code> which is validated using <code>@IsURL</code>.  But, we use <code>new URL(url)</code> to parse that to an URL object, and store it as a URL.  We can then implement other <code>get</code> accessors to retrieve fields from the URL, and a <code>toString</code> method for conversion back to string format.  There is a second <code>set</code> accessor which lets us change the <code>host</code> field of the URL.  That accessor is protected by <code>@IsFQDN</code> which ensures that the string is a fully qualified domain name.</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">const</span> ir = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ImgRef</span>();
 
 ir.<span class="hljs-property">src</span> = <span class="hljs-string">&apos;https://example.com/logo.jpg&apos;</span>;
@@ -255,12 +251,17 @@ ir.<span class="hljs-property">src</span> = <span class="hljs-string">&apos;http
 ir.<span class="hljs-property">host</span> = <span class="hljs-string">&apos;foo.bar&apos;</span>;
 <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ir.<span class="hljs-title function_">toString</span>());
 
+<span class="hljs-comment">// https://xn--diplomatic-qgb.ro/logo.jpg</span>
+ir.<span class="hljs-property">host</span> = <span class="hljs-string">&apos;diplomatic&#x103;.ro&apos;</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ir.<span class="hljs-title function_">toString</span>());
+
 <span class="hljs-comment">// Error: Value &apos;diplomatic&#x103;&#xEE;ntrsurpriz&#x103;&apos; is not a fully qualified domain name</span>
 ir.<span class="hljs-property">host</span> = <span class="hljs-string">&apos;diplomatic&#x103;&#xEE;ntrsurpriz&#x103;&apos;</span>;
 <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ir.<span class="hljs-title function_">toString</span>());
 </code></pre>
-<p>The first few lines of the test execute as expected.  Since the <code>url</code> function returns the URL object, the output in will be the object structure.  Upon assigning a value to <code>ir.host</code>, setting the <code>host</code> field of the URL, the URL changes from <code>https://example.com/logo.jpg</code> to <code>https://foo.bar/logo.jpg</code>, which is exactly what&apos;s&apos; expected.</p>
-<p>The last portion does not use a domain name.  Therefore, the error shown here is thrown.</p>
+<p>The first few lines of the test execute as expected.  Since the <code>url</code> function returns the URL object, the output in will be the object structure.  Upon assigning a value to <code>ir.host</code>, setting the <code>host</code> field of the URL, the URL changes from <code>https://example.com/logo.jpg</code> to <code>https://foo.bar/logo.jpg</code>, which is exactly what&apos;s expected.</p>
+<p>Using some Romanian text along with the <code>.ro</code> top-level-domain (TLD) executes correctly, but the domain name is transliterated.</p>
+<p>The last test does not use a domain name, but a simple string.  Therefore, the error shown here is thrown.</p>
 <p>A similar example:</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> {
     <span class="hljs-title class_">ValidateAccessor</span>, <span class="hljs-title class_">IsFloatRange</span>,
@@ -306,8 +307,15 @@ sp.<span class="hljs-property">speed</span> = <span class="hljs-string">&apos;30
 <p>In the first, we assign a <code>number</code>, and in the second we assign a <code>string</code> that is numerical.  In both cases the stored value is a <code>number</code> with the correct value.</p>
 <p>In the second pair we assign invalid data.  That causes an appropriate error to be thrown.</p>
 <h1>Validation of non-string data</h1>
-<p>The last example showed that some of the decorators handle validation of both <code>number</code> and <code>string</code> values, while most of them solely validate <code>string</code> values.  But, obviously, there are a zillion and one different data types to validate.</p>
-<p>This project is welcome to receive new validation code.  Additionally, it provides a function making it easy to create new validation decorators.  See: <a href="custom-validator.html" title="Developing custom validator decorators">Developing custom validator decorators</a></p>
+<p>The last example showed that some of the decorators handle validation of both <code>number</code> and <code>string</code> values, while most of them solely validate <code>string</code> values.</p>
+<p>Generalized, the pattern is to</p>
+<ul>
+<li>Receive and validate data as a <code>string</code>, or in some cases as a <code>number</code></li>
+<li>If appropriate, convert to another object type by parsing the string</li>
+</ul>
+<p>But, obviously, there are a zillion and one different data types to validate.  Sometimes we want to validate data in its native data type, rather than validating the string representation.</p>
+<p>This project is welcome to receive new validator functions.</p>
+<p>Additionally, it provides a function making it easy to create new validation decorators.  See: <a href="custom-validator.html" title="Developing custom data validation decorators for TypeScript">Developing custom data validation decorators for TypeScript</a></p>
 
 </article>
 <!-- <section id="right" class="col-sm-2">

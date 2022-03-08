@@ -9,7 +9,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width">
-<title>Developing custom validator decorators</title>
+<title>Developing custom data validation decorators for TypeScript</title>
 
 
 
@@ -30,7 +30,7 @@
 
 
 
-<meta name="pagename" content="Developing custom validator decorators">
+<meta name="pagename" content="Developing custom data validation decorators for TypeScript">
 
 
 
@@ -40,9 +40,9 @@
 
 
 
-<meta name="date" content="2022-03-05T19:57:04.848Z">
+<meta name="date" content="2022-03-08T22:20:08.792Z">
 
-<meta name="DC.title" content="Developing custom validator decorators">
+<meta name="DC.title" content="Developing custom data validation decorators for TypeScript">
 
 
 
@@ -59,7 +59,7 @@
 
 <!-- OpenGraph Meta Tags -->
 
-<meta name="og:title" content="Developing custom validator decorators">
+<meta name="og:title" content="Developing custom data validation decorators for TypeScript">
 
 <meta name="og:url" content="https://example.akashacms.com/custom-validator.html">
 
@@ -112,7 +112,7 @@
 <div class="row">
 <span class="col-md-12" style="text-align: center;">
 <!-- <a href="/index.html"><img src="/images/project-logo.jpg" width="150px" align="left"/></a> -->
-<h1 align="center">Developing custom validator decorators</h1>
+<h1 align="center">Developing custom data validation decorators for TypeScript</h1>
 </span>
 </div>
 </header>
@@ -123,12 +123,9 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-          <a class="nav-link" href="index.html"><i class="fas fa-home"></i>Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="index.html"><i class="fas fa-home"></i>Home</a>
+        </li>
         <li class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     Guide <span class="caret"></span></a>
@@ -167,7 +164,7 @@
 <section id="breadcrumb" class="col-sm-12">
 <nav aria-label="breadcrumb" id="breadcrumbTrail">
 <ol class="breadcrumb">
- <li class="breadcrumb-item "> <a href="custom-validator.html">Developing custom validator decorators</a> </li>
+ <li class="breadcrumb-item "> <a href="custom-validator.html">Developing custom data validation decorators for TypeScript</a> </li>
 </ol>
 </nav>
 </section>
@@ -175,7 +172,7 @@
 
 <section id="category-tags" class="col-sm-12">
 
-    Date: Sat Mar 05 2022
+    Date: Tue Mar 08 2022
 
 
 </section>
@@ -184,13 +181,14 @@
 <div class="row">
 <article class="col-sm-12">
 
-<p>Implementing a custom validation decorator is simple by using the <code>generateValidationDecorator</code> function.  This function assists with generating decorator functions that store necessary data in reflection metadata.  This function is used in all validation decorators exported by the <code>runtime-data-validation</code> package.</p>
+<p>Implementing a custom validation decorator is simple by using the <code>generateValidationDecorator</code> function.  This function handles storing the metadata required so that <code>@ValidateParams</code> and <code>@ValidateAccessor</code> know what validations to execute.  This function is used in all validation decorators exported by the <code>runtime-data-validation</code> package.</p>
 <p>The following code comes from the test suite, <code>test/src/custom.ts</code> in the repository.</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> {
-    <span class="hljs-title class_">ValidateParams</span>, <span class="hljs-title class_">ValidateAccessor</span>, generateValidationDecorator
+    <span class="hljs-title class_">ValidateParams</span>, <span class="hljs-title class_">ValidateAccessor</span>, generateValidationDecorator,
+    validators
 } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;runtime-data-validation&apos;</span>;
 </code></pre>
-<p>Import a few functions from the package, including <code>generateValidationDecorator</code>.</p>
+<p>Import a few functions from the package, including <code>generateValidationDecorator</code>.  The <code>validators</code> field contains simple validation functions which return <code>true</code> or <code>false</code>.</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">CustomType</span> = {
     <span class="hljs-attr">flag1</span>: <span class="hljs-built_in">boolean</span>;
     <span class="hljs-attr">speed</span>: <span class="hljs-built_in">number</span>;
@@ -216,13 +214,29 @@
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value !== <span class="hljs-string">&apos;object&apos;</span>) {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     }
+    <span class="hljs-comment">// Both of these fields are required in</span>
+    <span class="hljs-comment">// the type definition</span>
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value?.<span class="hljs-property">flag1</span> !== <span class="hljs-string">&apos;boolean&apos;</span>
      || <span class="hljs-keyword">typeof</span> value?.<span class="hljs-property">speed</span> !== <span class="hljs-string">&apos;number&apos;</span>) {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     }
+    <span class="hljs-comment">// Speed must be a positive number</span>
+    <span class="hljs-keyword">if</span> (value.<span class="hljs-property">speed</span> &lt; <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-comment">// This field is optional, and therefore can</span>
+    <span class="hljs-comment">// be undefined.</span>
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value?.<span class="hljs-property">title</span> !== <span class="hljs-string">&apos;undefined&apos;</span>
      &amp;&amp; <span class="hljs-keyword">typeof</span> value?.<span class="hljs-property">title</span> !== <span class="hljs-string">&apos;string&apos;</span>) {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-comment">// Be certain that `title` is correct</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value?.<span class="hljs-property">title</span> !== <span class="hljs-string">&apos;undefined&apos;</span>
+     &amp;&amp; <span class="hljs-keyword">typeof</span> value?.<span class="hljs-property">title</span> === <span class="hljs-string">&apos;string&apos;</span>) {
+        <span class="hljs-keyword">if</span> (!validators.<span class="hljs-title function_">isAscii</span>(value.<span class="hljs-property">title</span>)
+         || !validators.<span class="hljs-title function_">matches</span>(value.<span class="hljs-property">title</span>, <span class="hljs-regexp">/^[a-zA-Z0-9 ]+$/</span>)) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }
     }
     <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 };
@@ -233,14 +247,15 @@
         <span class="hljs-string">`Value :value: is not a CustomType`</span>);
 }
 </code></pre>
-<p>Each TypeScript decorator is implemented by a function.  For a complete introduction see <a href="https://javascript.plainenglish.io/deep-introduction-to-using-and-implementing-typescript-decorators-a9e876ad0d43"><em>How to Use and Implement TypeScript Decorators</em></a></p>
+<p>Each TypeScript decorator is implemented by a function.  That means the <code>IsCustom</code> function can be used as a decorator as <code>@IsCustom()</code>.  For a complete introduction see <a href="https://javascript.plainenglish.io/deep-introduction-to-using-and-implementing-typescript-decorators-a9e876ad0d43"><em>How to Use and Implement TypeScript Decorators</em></a></p>
 <p>This decorator function follows the decorator factory pattern.  The <code>IsCustom</code> function itself is not a decorator function.  Instead the decorator function is returned by <code>generateValidationDecorator</code>.</p>
 <p>This function takes two parameters:</p>
 <ul>
 <li>The validation function - these return <code>false</code> if the item fails validation, and <code>true</code> if it is valid</li>
 <li>A message to use in the thrown exception if validation fails.  The marker <code>:value:</code> will receive the text resulting from calling <code>util.inspect(value)</code>.</li>
 </ul>
-<p>In this case, <code>isCustomType</code> can serve as a <em>Type Guard</em> function separately from being used in the validation decorator.  Type guards is a pattern recommended by the TypeScript team to create functions like this which inspect objects and determine if the object matches a desired shape.  The <code>isCustomType</code> function is then used as the validation function.</p>
+<p>In this case, <code>isCustomType</code> can serve as a <em>Type Guard</em> function separately from being used in the validation decorator.  Type guards are a pattern recommended by the TypeScript team to create functions like this which inspect objects and determine if the object matches a desired shape.  The <code>isCustomType</code> function is then used as the validation function.</p>
+<p>In <code>isCustomType</code> we demostrate using the validation functions in <code>validators</code> for custom validation.  Because <code>CustomType</code> is not a class, we cannot attach decorators to its properties.  But, <code>validators.isAscii</code> and <code>validators.matches</code> the implementation behind the <code>@IsAscii</code> and <code>@matches</code> decorators.  That makes these functions equivalent to using the corresponding decorators.</p>
 <p>The following tests produce either success or failure:</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">const</span> cve = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomValidationExample</span>();
 
