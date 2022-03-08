@@ -3,7 +3,7 @@ layout: article.html.ejs
 title: Data formats for validation, and storing data
 ---
 
-As of this writing, the validation decorators and validation functions primarily validate string data.  A few of the functions act on numbers, and in that case can take either `string` or `number` data.  Obviously there are many other data types we might want to validate, so let's discuss what to do.
+As of this writing, the validation decorators and validation functions primarily validate string data.  A few of the functions act on numbers, and in that case can take either `string` or `number` data.  Additionally, the package makes it easy to create custom validation decorators for custom data types.  Obviously there is a very long list of data types we might want to validate, so let's discuss what to do.
 
 This package is based on `validator.js` which validates `string` data items.  It has a long list of validation functions, all of which validate strings.
 
@@ -25,7 +25,7 @@ class Example {
 }
 ```
 
-The `IsAlpha` decorator ensures that the string assigned to `#title` only contains alphabetic characters.  This particular example says that not only can the text only contain alphabetic characters, but from the US English locale.
+The `IsAlpha` decorator ensures that the string assigned to `#title` only contains alphabetic characters.  This particular example additionally says that the text must be in the US English locale.
 
 To see that in action:
 
@@ -44,7 +44,7 @@ ee.title = 'diplomaticăîntrsurpriză';
 console.log(ee.title);
 ```
 
-The first assignment solely uses alphabetic characters, and works great.  The second has non-alphabetic characters, the spaces, and fails with the error message.  The third has some Romanian text, and also fails the validation.
+The first assignment solely uses alphabetic characters, and works great.  The second has non-alphabetic characters, the spaces, and fails with the error message.  The third has some Romanian text, using characters outside of the US-ASCII character set, which also fails the validation.
 
 In this case the data is assigned to the `set` function as a `string`, it arrives as a `string` to the accessor function, and is stored as a `string` in the `#title` property.
 
@@ -96,25 +96,66 @@ ir.host = 'diplomaticăîntrsurpriză';
 console.log(ir.toString());
 ```
 
-The first few lines of the test execute as expected.  Since the `url` function returns the URL in its native format, the output in that case is the object structure.  The host portion of the URL changes from `https://example.com/logo.jpg` to `https://foo.bar/logo.jpg`, which is just what we'd expect.
+The first few lines of the test execute as expected.  Since the `url` function returns the URL object, the output in will be the object structure.  Upon assigning a value to `ir.host`, setting the `host` field of the URL, the URL changes from `https://example.com/logo.jpg` to `https://foo.bar/logo.jpg`, which is exactly what's' expected.
 
-Since the last portion does not use a domain name, the error shown here is thrown.
+The last portion does not use a domain name.  Therefore, the error shown here is thrown.
 
 A similar example:
 
 ```ts
-class Speed {
-    #viteza: number;
+import {
+    ValidateAccessor, IsFloatRange,
+    conversions
+} from 'runtime-data-validation';
 
-    @ValidateAccessor<string | number>()
-    @IsFloatRange(0, 99999)
-    set speed(ns: string | number) { this.#viteza = ToFloat(ns); }
-    get speed() { return this.#viteza; }
+const { ToFloat } = conversions;
 
-    toString() { return this.#viteza?.toString(); }
+export class SpeedExample {
+
+    #speed: number;
+
+    @ValidateAccessor<number | string>()
+    @IsFloatRange(10, 70)
+    set speed(nc: number | string) { 
+        this.#speed = ToFloat(nc);
+    }
+    get speed() { return this.#speed; }
+
 }
 ```
 
-This is the same strategy of receiving data as a `string`, and converting it to the native data format.  Notice that the type supplied to the `set` accessor and to `@ValidateAccessor` is `string | number`, so that TypeScript knows to accept either data format.
+The `@IsFloatRange` decorator uses the `isFloat` function from `validator.js`, which only validates `string` data.  However, the implementation validates both `string` and `float`, hence the union type used here, `number | string`.  This is because `@IsFloatRange` only uses `isFloat` for string data, and if it is given a `number` it handles the validation itself.
 
-The `@IsFloatRange` uses the `isFloat` function from `validator.js`, which only validates `string` data.  This means `@IsFloatRange` tests its input, and if it is a `number` it handles the validation itself rather than using `validator.js`.
+Hence the `set` accessor can be given data in either format.  The `conversions.ToFloat` function takes care of converting the `string` to a `number` if needed.
+
+To test it, try this:
+
+```ts
+const sp = new SpeedExample();
+
+sp.speed = 30;
+// { speed: 30, type: 'number' }
+console.log({ speed: sp.speed, type: typeof sp.speed });
+
+sp.speed = '30';
+// { speed: 30, type: 'number' }
+console.log({ speed: sp.speed, type: typeof sp.speed });
+
+// Error: Value '300 miles/hr' not a float between 10 and 70
+// sp.speed = 300;
+// console.log(sp.speed);
+
+// Error: Value '300 miles/hr' not a float between 10 and 70
+sp.speed = '300 miles/hr';
+console.log(sp.speed);
+```
+
+In the first, we assign a `number`, and in the second we assign a `string` that is numerical.  In both cases the stored value is a `number` with the correct value.
+
+In the second pair we assign invalid data.  That causes an appropriate error to be thrown.
+
+# Validation of non-string data
+
+The last example showed that some of the decorators handle validation of both `number` and `string` values, while most of them solely validate `string` values.  But, obviously, there are a zillion and one different data types to validate.
+
+This project is welcome to receive new validation code.  Additionally, it provides a function making it easy to create new validation decorators.  See: [](custom-validator.html)
