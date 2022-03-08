@@ -40,7 +40,7 @@
 
 
 
-<meta name="date" content="2022-03-06T04:50:08.664Z">
+<meta name="date" content="2022-03-08T00:50:10.858Z">
 
 <meta name="DC.title" content="Data formats for validation, and storing data">
 
@@ -175,7 +175,7 @@
 
 <section id="category-tags" class="col-sm-12">
 
-    Date: Sat Mar 05 2022
+    Date: Mon Mar 07 2022
 
 
 </section>
@@ -184,7 +184,7 @@
 <div class="row">
 <article class="col-sm-12">
 
-<p>As of this writing, the validation decorators and validation functions primarily validate string data.  A few of the functions act on numbers, and in that case can take either <code>string</code> or <code>number</code> data.  Obviously there are many other data types we might want to validate, so let&apos;s discuss what to do.</p>
+<p>As of this writing, the validation decorators and validation functions primarily validate string data.  A few of the functions act on numbers, and in that case can take either <code>string</code> or <code>number</code> data.  Additionally, the package makes it easy to create custom validation decorators for custom data types.  Obviously there is a very long list of data types we might want to validate, so let&apos;s discuss what to do.</p>
 <p>This package is based on <code>validator.js</code> which validates <code>string</code> data items.  It has a long list of validation functions, all of which validate strings.</p>
 <p>A simple example is:</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> {
@@ -201,7 +201,7 @@
     <span class="hljs-keyword">get</span> <span class="hljs-title function_">title</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#title; }
 }
 </code></pre>
-<p>The <code>IsAlpha</code> decorator ensures that the string assigned to <code>#title</code> only contains alphabetic characters.  This particular example says that not only can the text only contain alphabetic characters, but from the US English locale.</p>
+<p>The <code>IsAlpha</code> decorator ensures that the string assigned to <code>#title</code> only contains alphabetic characters.  This particular example additionally says that the text must be in the US English locale.</p>
 <p>To see that in action:</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">const</span> ee = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Example</span>();
 
@@ -216,7 +216,7 @@ ee.<span class="hljs-property">title</span> = <span class="hljs-string">&apos;A 
 ee.<span class="hljs-property">title</span> = <span class="hljs-string">&apos;diplomatic&#x103;&#xEE;ntrsurpriz&#x103;&apos;</span>;
 <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ee.<span class="hljs-property">title</span>);
 </code></pre>
-<p>The first assignment solely uses alphabetic characters, and works great.  The second has non-alphabetic characters, the spaces, and fails with the error message.  The third has some Romanian text, and also fails the validation.</p>
+<p>The first assignment solely uses alphabetic characters, and works great.  The second has non-alphabetic characters, the spaces, and fails with the error message.  The third has some Romanian text, using characters outside of the US-ASCII character set, which also fails the validation.</p>
 <p>In this case the data is assigned to the <code>set</code> function as a <code>string</code>, it arrives as a <code>string</code> to the accessor function, and is stored as a <code>string</code> in the <code>#title</code> property.</p>
 <h1>Validating as a string, then converting to another type</h1>
 <p>In many cases we can receive data as a <code>string</code> but want to store it as its innate data format.</p>
@@ -259,22 +259,55 @@ ir.<span class="hljs-property">host</span> = <span class="hljs-string">&apos;foo
 ir.<span class="hljs-property">host</span> = <span class="hljs-string">&apos;diplomatic&#x103;&#xEE;ntrsurpriz&#x103;&apos;</span>;
 <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(ir.<span class="hljs-title function_">toString</span>());
 </code></pre>
-<p>The first few lines of the test execute as expected.  Since the <code>url</code> function returns the URL in its native format, the output in that case is the object structure.  The host portion of the URL changes from <code>https://example.com/logo.jpg</code> to <code>https://foo.bar/logo.jpg</code>, which is just what we&apos;d expect.</p>
-<p>Since the last portion does not use a domain name, the error shown here is thrown.</p>
+<p>The first few lines of the test execute as expected.  Since the <code>url</code> function returns the URL object, the output in will be the object structure.  Upon assigning a value to <code>ir.host</code>, setting the <code>host</code> field of the URL, the URL changes from <code>https://example.com/logo.jpg</code> to <code>https://foo.bar/logo.jpg</code>, which is exactly what&apos;s&apos; expected.</p>
+<p>The last portion does not use a domain name.  Therefore, the error shown here is thrown.</p>
 <p>A similar example:</p>
-<pre><code class="hljs language-ts"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Speed</span> {
-    #<span class="hljs-attr">viteza</span>: <span class="hljs-built_in">number</span>;
+<pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> {
+    <span class="hljs-title class_">ValidateAccessor</span>, <span class="hljs-title class_">IsFloatRange</span>,
+    conversions
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;runtime-data-validation&apos;</span>;
 
-    <span class="hljs-meta">@ValidateAccessor</span>&lt;<span class="hljs-built_in">string</span> | <span class="hljs-built_in">number</span>&gt;()
-    <span class="hljs-meta">@IsFloatRange</span>(<span class="hljs-number">0</span>, <span class="hljs-number">99999</span>)
-    <span class="hljs-keyword">set</span> <span class="hljs-title function_">speed</span>(<span class="hljs-params">ns: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">number</span></span>) { <span class="hljs-variable language_">this</span>.#viteza = <span class="hljs-title class_">ToFloat</span>(ns); }
-    <span class="hljs-keyword">get</span> <span class="hljs-title function_">speed</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#viteza; }
+<span class="hljs-keyword">const</span> { <span class="hljs-title class_">ToFloat</span> } = conversions;
 
-    <span class="hljs-title function_">toString</span>(<span class="hljs-params"></span>) { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#viteza?.<span class="hljs-title function_">toString</span>(); }
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SpeedExample</span> {
+
+    #<span class="hljs-attr">speed</span>: <span class="hljs-built_in">number</span>;
+
+    <span class="hljs-meta">@ValidateAccessor</span>&lt;<span class="hljs-built_in">number</span> | <span class="hljs-built_in">string</span>&gt;()
+    <span class="hljs-meta">@IsFloatRange</span>(<span class="hljs-number">10</span>, <span class="hljs-number">70</span>)
+    <span class="hljs-keyword">set</span> <span class="hljs-title function_">speed</span>(<span class="hljs-params">nc: <span class="hljs-built_in">number</span> | <span class="hljs-built_in">string</span></span>) { 
+        <span class="hljs-variable language_">this</span>.#speed = <span class="hljs-title class_">ToFloat</span>(nc);
+    }
+    <span class="hljs-keyword">get</span> <span class="hljs-title function_">speed</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#speed; }
+
 }
 </code></pre>
-<p>This is the same strategy of receiving data as a <code>string</code>, and converting it to the native data format.  Notice that the type supplied to the <code>set</code> accessor and to <code>@ValidateAccessor</code> is <code>string | number</code>, so that TypeScript knows to accept either data format.</p>
-<p>The <code>@IsFloatRange</code> uses the <code>isFloat</code> function from <code>validator.js</code>, which only validates <code>string</code> data.  This means <code>@IsFloatRange</code> tests its input, and if it is a <code>number</code> it handles the validation itself rather than using <code>validator.js</code>.</p>
+<p>The <code>@IsFloatRange</code> decorator uses the <code>isFloat</code> function from <code>validator.js</code>, which only validates <code>string</code> data.  However, the implementation validates both <code>string</code> and <code>float</code>, hence the union type used here, <code>number | string</code>.  This is because <code>@IsFloatRange</code> only uses <code>isFloat</code> for string data, and if it is given a <code>number</code> it handles the validation itself.</p>
+<p>Hence the <code>set</code> accessor can be given data in either format.  The <code>conversions.ToFloat</code> function takes care of converting the <code>string</code> to a <code>number</code> if needed.</p>
+<p>To test it, try this:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">const</span> sp = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SpeedExample</span>();
+
+sp.<span class="hljs-property">speed</span> = <span class="hljs-number">30</span>;
+<span class="hljs-comment">// { speed: 30, type: &apos;number&apos; }</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>({ <span class="hljs-attr">speed</span>: sp.<span class="hljs-property">speed</span>, <span class="hljs-attr">type</span>: <span class="hljs-keyword">typeof</span> sp.<span class="hljs-property">speed</span> });
+
+sp.<span class="hljs-property">speed</span> = <span class="hljs-string">&apos;30&apos;</span>;
+<span class="hljs-comment">// { speed: 30, type: &apos;number&apos; }</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>({ <span class="hljs-attr">speed</span>: sp.<span class="hljs-property">speed</span>, <span class="hljs-attr">type</span>: <span class="hljs-keyword">typeof</span> sp.<span class="hljs-property">speed</span> });
+
+<span class="hljs-comment">// Error: Value &apos;300 miles/hr&apos; not a float between 10 and 70</span>
+<span class="hljs-comment">// sp.speed = 300;</span>
+<span class="hljs-comment">// console.log(sp.speed);</span>
+
+<span class="hljs-comment">// Error: Value &apos;300 miles/hr&apos; not a float between 10 and 70</span>
+sp.<span class="hljs-property">speed</span> = <span class="hljs-string">&apos;300 miles/hr&apos;</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(sp.<span class="hljs-property">speed</span>);
+</code></pre>
+<p>In the first, we assign a <code>number</code>, and in the second we assign a <code>string</code> that is numerical.  In both cases the stored value is a <code>number</code> with the correct value.</p>
+<p>In the second pair we assign invalid data.  That causes an appropriate error to be thrown.</p>
+<h1>Validation of non-string data</h1>
+<p>The last example showed that some of the decorators handle validation of both <code>number</code> and <code>string</code> values, while most of them solely validate <code>string</code> values.  But, obviously, there are a zillion and one different data types to validate.</p>
+<p>This project is welcome to receive new validation code.  Additionally, it provides a function making it easy to create new validation decorators.  See: <a href="custom-validator.html" title="Developing custom validator decorators">Developing custom validator decorators</a></p>
 
 </article>
 <!-- <section id="right" class="col-sm-2">
