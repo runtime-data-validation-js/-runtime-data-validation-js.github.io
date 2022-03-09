@@ -40,7 +40,7 @@
 
 
 
-<meta name="date" content="2022-03-08T22:20:08.792Z">
+<meta name="date" content="2022-03-09T08:05:15.941Z">
 
 <meta name="DC.title" content="Developing custom data validation decorators for TypeScript">
 
@@ -133,6 +133,7 @@
                 <a class="dropdown-item" href="getting-started.html">Getting Started</a>
                 <a class="dropdown-item" href="data-format.html">Data Formats</a>
                 <a class="dropdown-item" href="custom-validator.html">Custom validation</a>
+                <a class="dropdown-item" href="validatation-functions.html">Validation functions</a>
             </div>
         </li>
         <li class="nav-item">
@@ -172,7 +173,7 @@
 
 <section id="category-tags" class="col-sm-12">
 
-    Date: Tue Mar 08 2022
+    Date: Wed Mar 09 2022
 
 
 </section>
@@ -279,7 +280,8 @@ cve.<span class="hljs-property">custom</span> = {
 </code></pre>
 <p>The success cases match the shape of CustomType, while the failure cases do not.  For the failure cases an exception is thrown by the validation.</p>
 <p>The TypeScript compiler will flag these at compile time.  But what if your code is used from JavaScript where there is no compile time, nor compile time type checking?</p>
-<p>Using the decorator factory pattern we can easily pass parameters to use in validation.</p>
+<h1>Passing custom options to a custom validation decorator</h1>
+<p>Using the decorator factory pattern we can easily pass parameters to use in validation.  This can be used for customizing the validation.  In our example above, the <code>speed</code> field might be limited to a specific range of speeds.  We don&apos;t want to get a speeding ticket, after all.</p>
 <pre><code class="hljs language-ts"><span class="hljs-keyword">function</span> <span class="hljs-title function_">IsCustomRange</span>(<span class="hljs-params">min: <span class="hljs-built_in">number</span>, max: <span class="hljs-built_in">number</span></span>) {
     <span class="hljs-keyword">return</span> <span class="hljs-title function_">generateValidationDecorator</span>(
         <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
@@ -300,6 +302,15 @@ cve.<span class="hljs-property">custom</span> = {
 <span class="hljs-keyword">set</span> <span class="hljs-title function_">customRange</span>(<span class="hljs-params">nc: CustomType</span>) { <span class="hljs-variable language_">this</span>.#customRange = nc; }
 <span class="hljs-keyword">get</span> <span class="hljs-title function_">customRange</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#customRange; }
 </code></pre>
+<p>Then, to test it, use <code>cve.customRange</code> and assign different values to <code>cve.customRange.speed</code>.</p>
+<h1>Using type predicates in type guard functions used for data validation</h1>
+<p>We described <code>isCustomType</code> as a type guard function.  The TypeScript documentation on <a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html"><em>Narrowing</em></a> contains much discussion of the type guard concept.  Type guard functions inspect an object, and determine whether it has the correct type.</p>
+<p>A related TypeScript feature is the <a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates"><em>type predicate</em></a> operator.  Such a function looks like this:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">const</span> isCustomTypeGuard = (<span class="hljs-attr">value</span>: <span class="hljs-built_in">any</span>): value is <span class="hljs-title class_">CustomType</span> =&gt; {
+    ...
+};
+</code></pre>
+<p>This, again, is directly out of the test suite.  The key is the return value, <code>VARIABLE is TYPE</code>.  This operator is essentially the same as <code>boolean</code> and there is no difference in behavior between <code>isCustomType</code> (returns <code>boolean</code>) and <code>isCustomTypeGuard</code> (returns type predicate).</p>
 
 </article>
 <!-- <section id="right" class="col-sm-2">

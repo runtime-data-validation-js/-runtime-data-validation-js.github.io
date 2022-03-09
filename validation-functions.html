@@ -1,0 +1,242 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!-- Consider adding a manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width">
+<title>Using and defining data validation functions</title>
+
+
+
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="pagename" content="Using and defining data validation functions">
+
+
+
+
+
+
+
+
+
+<meta name="date" content="2022-03-09T08:05:15.941Z">
+
+<meta name="DC.title" content="Using and defining data validation functions">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- OpenGraph Meta Tags -->
+
+<meta name="og:title" content="Using and defining data validation functions">
+
+<meta name="og:url" content="https://example.akashacms.com/validation-functions.html">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="canonical" href="https://example.akashacms.com/validation-functions.html">
+
+<link rel="sitemap" type="application/xml" href="sitemap.xml" title="Sitemap">
+
+
+<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" type="text/css" href="css/flatly.min.css"><link rel="stylesheet" type="text/css" href="css/style.css"><link rel="stylesheet" type="text/css" href="vendor/fontawesome-free/css/all.min.css"><link rel="stylesheet" type="text/css" href="vendor/highlight.js/styles/tomorrow-night-blue.css">
+
+</head>
+<body>
+<!-- partial file-name="site-navbar.html"></partial -->
+<div class="container" role="main">
+<div class="row">
+<div class="col-md-12">
+<header class="col-md-12">
+<div class="row">
+<span class="col-md-12" style="text-align: center;">
+<!-- <a href="/index.html"><img src="/images/project-logo.jpg" width="150px" align="left"/></a> -->
+<h1 align="center">Using and defining data validation functions</h1>
+</span>
+</div>
+</header>
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+            <a class="nav-link" href="index.html"><i class="fas fa-home"></i>Home</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    Guide <span class="caret"></span></a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="getting-started.html">Getting Started</a>
+                <a class="dropdown-item" href="data-format.html">Data Formats</a>
+                <a class="dropdown-item" href="custom-validator.html">Custom validation</a>
+                <a class="dropdown-item" href="validatation-functions.html">Validation functions</a>
+            </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://runtime-data-validation-js.github.io/runtime-data-validation-typescript/">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="news/index.html">News</a>
+        </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" method="get" id="ddgSearch" action="https://duckduckgo.com/">
+        <input type="hidden" name="sites" value="https://runtime-data-validation-js.github.io">
+        <input type="hidden" name="k7" value="#ffffff">
+        <input type="hidden" name="k8" value="#222222">
+        <input type="hidden" name="k9" value="#00278e">
+        <input type="hidden" name="kx" value="#20692b">
+        <input type="hidden" name="kj" value="#fafafa">
+        <input type="hidden" name="kt" value="p">
+        <input type="text" name="q" placeholder="Search runtime-data-validation" aria-label="Search runtime-data-validation on DuckDuckGo">
+        <button type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+</div>
+</div>
+<div class="row">
+<div class="col-md-12">
+<div class="row">
+
+<section id="breadcrumb" class="col-sm-12">
+<nav aria-label="breadcrumb" id="breadcrumbTrail">
+<ol class="breadcrumb">
+ <li class="breadcrumb-item "> <a href="validation-functions.html">Using and defining data validation functions</a> </li>
+</ol>
+</nav>
+</section>
+
+
+<section id="category-tags" class="col-sm-12">
+
+    Date: Wed Mar 09 2022
+
+
+</section>
+
+</div>
+<div class="row">
+<article class="col-sm-12">
+
+<p>The <code>runtime-data-validation</code> package revolves around data validation functions.  There is a long list of validation decorators available, but each of those decorators in turn relies on validation functions.</p>
+<p>The TypeScript documentation talks a lot about <em>type guard</em> functions.  These functions inspect an object, and provide a <code>boolean</code> determination whether it is of a given <em>Type</em>.  In discussing <a href="custom-validator.html">how to develop custom validation decorators</a> we showed a type, <em>CustomType</em>, and a function, <em>isCustomType</em>, which determines whether an object has the CustomType shape.</p>
+<p>Type guard functions like that can be useful in data validation.  But, there is a difference between determining which <em>type</em> an object is, versus whether the object contains valid data.  The object could be of the correct type, but have insane data values which will cause the application to crash.</p>
+<p>To take an example, lets look at one of the decorator functions:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">IsIntRange</span>(<span class="hljs-params">min: <span class="hljs-built_in">number</span>, max: <span class="hljs-built_in">number</span></span>) {
+    <span class="hljs-comment">// console.log(`params.IsIntRange ${min} ${max}`);</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-title function_">generateValidationDecorator</span>(
+        <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> validators.<span class="hljs-title function_">isIntRange</span>(value, min, max),
+        <span class="hljs-string">`Value :value: not an integer between <span class="hljs-subst">${min}</span> and <span class="hljs-subst">${max}</span>`</span>);
+}
+</code></pre>
+<p>This implements the <code>@IsIntRange</code> decorator.  This takes two parameters, <code>min</code> and <code>max</code>, and determines whether the number is within that range.  The <code>generateValidationDecorator</code> function is discussed in <a href="custom-validator.html">elsewhere</a>, and its function is to as its name implies, which is to create the actual decorator function.  It does this by using the validation function which is passed as the first parameter.</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title function_">isIntRange</span> = (<span class="hljs-params">value: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">number</span>, min: <span class="hljs-built_in">number</span>, max: <span class="hljs-built_in">number</span></span>) =&gt; {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value === <span class="hljs-string">&apos;number&apos;</span>) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Number</span>.<span class="hljs-title function_">isInteger</span>(value)
+         &amp;&amp; value &gt;= min &amp;&amp; value &lt;= max) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (validator.<span class="hljs-title function_">isInt</span>(value, { <span class="hljs-attr">min</span>: min, <span class="hljs-attr">max</span>: max })) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+};
+</code></pre>
+<p>This is the validation function for <code>@IsIntRange</code>.  This particular validation function has to accommodate whether its value is a <code>number</code> or a <code>string</code>.  If it is a <code>number</code>, the validation is directly handled in this function, otherwise it is handled in a function provided by the <code>validator.js</code> library.</p>
+<h1>Defining validation functions</h1>
+<p>The point of bringing this up is to demonstrate that data validation is a step beyond type validation.  We can easily determine between <code>number</code> and <code>string</code>.  But, the question of whether a <code>string</code> is a numerical string is a deeper question having to do with the contents of the string.  Likewise, if you want to limit the number to a given range, that&apos;s an even deeper question.</p>
+<p>In other words, <em>data validation</em> is <em>type validation</em> plus determining whether the values are legitimate.</p>
+<p>A variable that is supposed to represent <em>speed</em> is going to be valid for a given range of numerical values.  It&apos;s not enough to determine that the variable is a <code>number</code> or a <code>string</code> which is numerical.  One must also determine whether the value is within the acceptable range.</p>
+<p>Therefore the validation functions we pass to <code>generateValidationDecorator</code> should not stop at a determination of the data type.  They need to determine validity as well.  The <code>@IsURL</code> decorator determines whether a <code>string</code> is a valid URL, for example.</p>
+<h1>Using validation functions</h1>
+<p>Inside the <code>runtime-data-validation</code> package, the validation functions are accessed this way:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> {
+    ...
+    <span class="hljs-title class_">ValidateParams</span>, <span class="hljs-title class_">ValidateAccessor</span>, generateValidationDecorator,
+    validators
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;runtime-data-validation&apos;</span>;
+</code></pre>
+<p>The <code>validators</code> object contains the validation functions provided by this package.</p>
+<p>To use one is simple.  For example, the validation function for <code>@IsAscii</code> is called like so: <code>validators.isAscii(value.title)</code></p>
+<p>To be used in a validation decorator, the first argument of the validation function must be the value to be validated.  If the validation function takes any options, those will be passed in subsequent arguments.</p>
+<p>Validation functions must return a <code>boolean</code> value where <code>true</code> says that <code>value</code> is valid, and <code>false</code> says it is not.</p>
+
+</article>
+<!-- <section id="right" class="col-sm-2">
+<partial file-name="sidebar.html"/>
+</section> -->
+</div>
+</div>
+</div>
+<footer class="row" style="text-align: center; height: 100px;">
+
+</footer>
+</div>
+<script src="vendor/jquery/jquery.min.js"></script><script src="vendor/popper.js/umd/popper.min.js"></script><script src="vendor/bootstrap/js/bootstrap.min.js"></script><script src="vendor/highlight.js/lib/highlight.js"></script><script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>
