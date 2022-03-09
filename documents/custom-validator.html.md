@@ -124,7 +124,9 @@ The success cases match the shape of CustomType, while the failure cases do not.
 
 The TypeScript compiler will flag these at compile time.  But what if your code is used from JavaScript where there is no compile time, nor compile time type checking?
 
-Using the decorator factory pattern we can easily pass parameters to use in validation.
+# Passing custom options to a custom validation decorator
+
+Using the decorator factory pattern we can easily pass parameters to use in validation.  This can be used for customizing the validation.  In our example above, the `speed` field might be limited to a specific range of speeds.  We don't want to get a speeding ticket, after all.
 
 ```ts
 function IsCustomRange(min: number, max: number) {
@@ -152,3 +154,18 @@ set customRange(nc: CustomType) { this.#customRange = nc; }
 get customRange() { return this.#customRange; }
 ```
 
+Then, to test it, use `cve.customRange` and assign different values to `cve.customRange.speed`.
+
+# Using type predicates in type guard functions used for data validation
+
+We described `isCustomType` as a type guard function.  The TypeScript documentation on [_Narrowing_](https://www.typescriptlang.org/docs/handbook/2/narrowing.html) contains much discussion of the type guard concept.  Type guard functions inspect an object, and determine whether it has the correct type.
+
+A related TypeScript feature is the [_type predicate_](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates) operator.  Such a function looks like this:
+
+```ts
+const isCustomTypeGuard = (value: any): value is CustomType => {
+    ...
+};
+```
+
+This, again, is directly out of the test suite.  The key is the return value, `VARIABLE is TYPE`.  This operator is essentially the same as `boolean` and there is no difference in behavior between `isCustomType` (returns `boolean`) and `isCustomTypeGuard` (returns type predicate).
