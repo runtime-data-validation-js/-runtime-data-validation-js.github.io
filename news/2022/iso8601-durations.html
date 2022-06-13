@@ -1,0 +1,200 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!-- Consider adding a manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width">
+<title>Support for ISO8601 duraton strings</title>
+
+
+
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="pagename" content="Support for ISO8601 duraton strings">
+
+
+
+
+
+
+
+
+
+<meta name="date" content="2022-06-13T16:50:09.175Z">
+
+<meta name="DC.title" content="Support for ISO8601 duraton strings">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- OpenGraph Meta Tags -->
+
+<meta name="og:title" content="Support for ISO8601 duraton strings">
+
+<meta name="og:url" content="https://example.akashacms.com/news/2022/iso8601-durations.html">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="canonical" href="https://example.akashacms.com/news/2022/iso8601-durations.html">
+
+<link rel="sitemap" type="application/xml" href="../../sitemap.xml" title="Sitemap">
+
+
+<link rel="stylesheet" type="text/css" href="../../vendor/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" type="text/css" href="../../css/flatly.min.css"><link rel="stylesheet" type="text/css" href="../../css/style.css"><link rel="stylesheet" type="text/css" href="../../vendor/fontawesome-free/css/all.min.css"><link rel="stylesheet" type="text/css" href="../../vendor/highlight.js/styles/tomorrow-night-blue.css">
+
+</head>
+<body>
+<!-- partial file-name="site-navbar.html"></partial -->
+<div class="container" role="main">
+<div class="row">
+<div class="col-md-12">
+<header class="col-md-12">
+<div class="row">
+<span class="col-md-12" style="text-align: center;">
+<!-- <a href="/index.html"><img src="/images/project-logo.jpg" width="150px" align="left"/></a> -->
+<h1 align="center">Support for ISO8601 duraton strings</h1>
+</span>
+</div>
+</header>
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+            <a class="nav-link" href="../../index.html"><i class="fas fa-home"></i>Home</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    Guide <span class="caret"></span></a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="../../getting-started.html">Getting Started</a>
+                <a class="dropdown-item" href="../../data-format.html">Data Formats</a>
+                <a class="dropdown-item" href="../../custom-validator.html">Custom validation</a>
+                <a class="dropdown-item" href="../../validation-functions.html">Validation functions</a>
+            </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://runtime-data-validation-js.github.io/runtime-data-validation-typescript/">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../index.html">News</a>
+        </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" method="get" id="ddgSearch" action="https://duckduckgo.com/">
+        <input type="hidden" name="sites" value="https://runtime-data-validation-js.github.io">
+        <input type="hidden" name="k7" value="#ffffff">
+        <input type="hidden" name="k8" value="#222222">
+        <input type="hidden" name="k9" value="#00278e">
+        <input type="hidden" name="kx" value="#20692b">
+        <input type="hidden" name="kj" value="#fafafa">
+        <input type="hidden" name="kt" value="p">
+        <input type="text" name="q" placeholder="Search runtime-data-validation" aria-label="Search runtime-data-validation on DuckDuckGo">
+        <button type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+</div>
+</div>
+<div class="row">
+<section id="breadcrumb" class="col-sm-12">
+<nav aria-label="breadcrumb" id="breadcrumbTrail">
+<ol class="breadcrumb">
+ <li class="breadcrumb-item "> <a href="../../index.html">Automatic runtime data validaton decorators for TypeScript</a> </li> <li class="breadcrumb-item "> <a href="../index.html">Announcements and News</a> </li> <li class="breadcrumb-item "> <a href="index.html">2022</a> </li> <li class="breadcrumb-item "> <a href="iso8601-durations.html">Support for ISO8601 duraton strings</a> </li>
+</ol>
+</nav>
+</section>
+<section id="category-tags" class="col-sm-12">
+
+    Date: Mon Jun 13 2022
+
+
+</section>
+</div>
+<div class="row">
+<article class="col-sm-12">
+
+<p>Included in the ISO8601 date standard is a string format for specifying time durations.  Such as <em>PT10S</em> means a duration of <em>10 seconds</em>, and <em>P1YT10H</em> means <em>1 year 10 hours</em>.</p>
+<p>These duration strings are widely used and should be supported.  This validation is not included in the supporting package, and was implemented directly by using the <code>iso8601-duration</code> package.</p>
+
+<div class="btn-group blog-prev-next-wrapper" role="group" aria-label="Next/Previous">
+<a class="btn btn-outline-primary blog-prev-link" href="first-release.html" role="button">
+&#xAB;&#xAB;&#xAB;&#xAB;&#xAB;&#xAB; First release of automatic runtime data validation decorators for TypeScript</a>
+<a class="btn btn-outline-primary blog-next-link" href="first-release.html" role="button">
+<span style="float: right">First release of automatic runtime data validation decorators for TypeScript &#xBB;&#xBB;&#xBB;&#xBB;&#xBB;&#xBB;</span></a>
+</div>
+</article>
+<!-- <section id="right" class="col-sm-2">
+<partial file-name="sidebar.html"></partial>
+</section> -->
+</div>
+<footer class="row" style="text-align: center; height: 100px;">
+
+</footer>
+</div>
+<script src="../../vendor/jquery/jquery.min.js"></script><script src="../../vendor/popper.js/umd/popper.min.js"></script><script src="../../vendor/bootstrap/js/bootstrap.min.js"></script><script src="../../vendor/highlight.js/lib/highlight.js"></script><script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>
